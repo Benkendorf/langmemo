@@ -5,13 +5,16 @@
     <title>
       {% block title %}PLACEHOLDER TITLE{% endblock %}
     </title>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     {% block metatags %}{% endblock %}
   </head>
   <body>
     {% include "includes/header.html" %}
     <main>
-      {% block main %}{% endblock %}
+      <div class="container py-5">                        
+        {% block content %}{% endblock %}
+      </div>
     </main>
     {% include "includes/footer.html" %}
   </body>

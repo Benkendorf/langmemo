@@ -1,3 +1,4 @@
+<!--
 <div class="shadow">
   <div class="row justify-content-center align-items-center" style="margin: 0;">
     <div class="col-3">
@@ -8,3 +9,40 @@
     </div>
   </div>
 </div>
+-->
+
+
+{% load static %}
+<header>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm">
+    <div class="container">
+      <div 
+        class="navbar-toggler" 
+        type="button" 
+        data-toggle="collapse" 
+        data-target="#navbarNav" 
+        aria-controls="navbarNav" 
+        aria-expanded="false" 
+        aria-label="Toggle navigation"
+        >
+        <span class="navbar-toggler-icon"></span>
+      </div>
+      <a class="navbar-brand" href="{% url 'homepage:index' %}">
+        <img src="{% static 'img/placeholder_logo.png' %}" height="50" class="d-inline-block align-top" alt="">            
+      </a>
+      <div class="collapse navbar-collapse" id="navbarNav">                      
+        <ul class="nav nav-pills">
+          
+          <li class="nav-item d-flex">
+            <a class="nav-link"
+              href="{% url 'homepage:index' %}">
+              О проекте
+            </a> 
+          </li>
+          
+        </ul>
+      </div> 
+      
+    </div>
+  </nav>
+</header>
