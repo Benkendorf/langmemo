@@ -8,22 +8,22 @@
 <article>
   <h1>Колоды:</h1>
   {% for deck in decks %}
-  <div>
-    <p>
-      Название: 
-      <b>{{ deck.name }}</b>
-    </p>
-    <p>
-      Карт: 
-      <b>{{ deck.cards_qty }}</b>
-      шт.
-    </p>
-    <p>
-      Доля успеха: 
-      <b>{{ deck.winrate }}</b>
-    </p>
+  <div class="card {% if deck.winrate < 0.5 %}border-danger{% endif %}">
+    <h5 class="card-header">{{ deck.name }}</h5>
+    <div class="card-body">
+      <p class="card-text">
+        Карт: 
+        <b>{{ deck.cards_qty }}</b>
+        шт.
+      </p>
+      <p class="card-text {% if deck.winrate < 0.5 %}text-danger{% endif %}">
+        Доля успеха: 
+        <b>{{ deck.winrate }}</b>
+      </p>
+      <a href="#" class="btn btn-primary">Редактировать</a>
+    </div>
   </div>
-  <hr>
+  <hr class="opacity-0">
   {% endfor %}
   <button type="button" class="btn btn-primary">Добавить колоду</button>
 </article>
