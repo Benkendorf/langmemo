@@ -7,6 +7,25 @@
 <hr>
 <article>
   <h1>Колоды:</h1>
+  {% for deck in decks %}
+  <div>
+    <p>
+      Название: 
+      <b>{{ deck.name }}</b>
+    </p>
+    <p>
+      Карт: 
+      <b>{{ deck.cards_qty }}</b>
+      шт.
+    </p>
+    <p>
+      Доля успеха: 
+      <b>{{ deck.winrate }}</b>
+    </p>
+  </div>
+  <hr>
+  {% endfor %}
+  <button type="button" class="btn btn-primary">Добавить колоду</button>
 </article>
 
 {% endblock %}
