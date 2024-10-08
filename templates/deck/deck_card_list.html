@@ -5,21 +5,41 @@
 {% block content %}
 
 <hr>
-<article>
+
+<article class="container row">
   <h1>Состав колоды {{ deck.deck_name }}:</h1>
   {% for card in deck.card_list %}
-  <div class="card">
-    <h5 class="card-header">{{ card }}</h5>
-    <div class="card-body">
-      <p class="card-text">
-        lmao
-      </p>
-      <a href="#" class="btn btn-primary">Редактировать</a>
+  <div class="col-4">
+    <div class="card">
+      <h5 class="card-header">{{ card }}</h5>
+      <div class="card-body">
+        <p class="card-text">
+          lmao
+        </p>
+        <a href="#" class="btn btn-primary">Редактировать</a>
+      </div>
     </div>
   </div>
-  <hr class="opacity-0">
+
+  {% if forloop.counter|divisibleby:"3" %}
+    <hr class="opacity-0">
+  {% endif %}
+
   {% endfor %}
-  <button type="button" class="btn btn-primary">Добавить карту</button>
+  
+  <div class="col-4">
+    <div class="card">
+      <h5 class="card-header">Добавить новую колоду</h5>
+      <div class="card-body">
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="Введите название" aria-label="Введите название" aria-describedby="basic-addon2">
+          <button class="btn btn-success" type="button" id="button-addon2">Добавить колоду</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
 </article>
 
 {% endblock %}
