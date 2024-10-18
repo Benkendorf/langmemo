@@ -7,8 +7,6 @@
 <hr>
 
 <article class="container row">
-
-<article class="container row">
   <h1>Состав колоды {{ deck.deck_name }}:</h1>
   {% for card in deck.card_list %}
   <div class="col-4">
@@ -16,9 +14,14 @@
       <h5 class="card-header">{{ card }}</h5>
       <div class="card-body">
         <p class="card-text">
+          Доля успеха:
+        </p><p class="card-text">
+          Уровень SRS:
+        </p>
+        <p class="card-text">
           Ответы:
         </p>
-        <a href="#" class="btn btn-primary">Сохранить</a>
+        <a href="#" class="btn btn-danger">Удалить</a>
       </div>
     </div>
   </div>
@@ -31,29 +34,22 @@
   
   <div class="col-4">
     <div class="card">
-      <h5 class="card-header">Добавить новую колоду</h5>
+      <h5 class="card-header">Добавить новую карту</h5>
       <div class="card-body">
-        <div class="input-group mb-3">
-          <input type="text" class="form-control" placeholder="Введите название" aria-label="Введите название" aria-describedby="basic-addon2">
-          <button class="btn btn-success" type="button" id="button-addon2">Добавить колоду</button>
-        </div>
+        <form>
+          <div class="mb-3">
+            <input type="text" class="form-control" placeholder="Введите вопрос" aria-label="Введите вопрос" aria-describedby="basic-addon2">
+          </div>
+          <div class="mb-3">
+            <input type="text" class="form-control" placeholder="Введите ответы через запятую" aria-label="Введите ответы через запятую" aria-describedby="basic-addon2">
+          </div>
+          
+        </form>
+        <a href="#" class="btn btn-success">Добавить</a>
       </div>
     </div>
   </div>
   
-  
-  
-  <div class="col-4">
-    <div class="card">
-      <h5 class="card-header">Добавить новую колоду</h5>
-      <div class="card-body">
-        <div class="input-group mb-3">
-          <input type="text" class="form-control" placeholder="Введите название" aria-label="Введите название" aria-describedby="basic-addon2">
-          <button class="btn btn-success" type="button" id="button-addon2">Добавить колоду</button>
-        </div>
-      </div>
-    </div>
-  </div>
   
   
 </article>
