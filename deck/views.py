@@ -19,3 +19,13 @@ def deck_card_list(request, deck_id):
             'deck': sample_deck
         }
     )
+
+
+def review(request, deck_id):
+    return render(
+        request,
+        template_name='deck/review.html',
+        context={
+            'deck': sample_deck
+        }
+    )

@@ -6,32 +6,10 @@
 
 <hr>
 
+
 <article class="container row">
   <h1>Состав колоды {{ deck.deck_name }}:</h1>
-  {% for card in deck.card_list %}
-  <div class="col-4">
-    <div class="card">
-      <h5 class="card-header">{{ card }}</h5>
-      <div class="card-body">
-        <p class="card-text">
-          Доля успеха:
-        </p><p class="card-text">
-          Уровень SRS:
-        </p>
-        <p class="card-text">
-          Ответы:
-        </p>
-        <a href="#" class="btn btn-danger">Удалить</a>
-      </div>
-    </div>
-  </div>
 
-  {% if forloop.counter|divisibleby:"3" %}
-    <hr class="opacity-0">
-  {% endif %}
-
-  {% endfor %}
-  
   <div class="col-4">
     <div class="card">
       <h5 class="card-header">Добавить новую карту</h5>
@@ -49,6 +27,36 @@
       </div>
     </div>
   </div>
+</article>
+
+<hr class="opacity-0">
+
+
+<article class="container row">
+  
+
+  {% for card in deck.card_list %}
+  <div class="col-4">
+    <div class="card">
+      <h5 class="card-header">{{ card }}</h5>
+      <div class="card-body">
+        <p class="card-text">
+          Доля успеха:
+        </p><p class="card-text">
+          Уровень SRS:
+        </p>
+        <a href="#" class="btn btn-danger">Удалить</a>
+      </div>
+    </div>
+  </div>
+
+  {% if forloop.counter|divisibleby:"3" %}
+    <hr class="opacity-0">
+  {% endif %}
+
+  {% endfor %}
+  
+  
   
   
   
