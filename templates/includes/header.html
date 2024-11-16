@@ -30,18 +30,28 @@
       <a class="navbar-brand" href="{% url 'homepage:index' %}">
         <img src="{% static 'img/placeholder_logo.png' %}" height="50" class="d-inline-block align-top" alt="">            
       </a>
-      <div class="collapse navbar-collapse" id="navbarNav">                      
-        <ul class="nav nav-pills">
-          
-          <li class="nav-item d-flex">
-            <a class="nav-link"
-              href="{% url 'about:description' %}">
+      {% with request.resolver_match.view_name as view_name %}
+        <ul class="nav  nav-pills">
+          <li class="nav-item">
+            <a class="nav-link {% if view_name == 'about:description' %} text-white {% endif %}" href="{% url 'about:description' %}">
               О проекте
-            </a> 
+            </a>
           </li>
-          
+          {% if user.is_authenticated %}
+            <div class="btn-group" role="group" aria-label="Basic outlined example">
+              <button type="button" class="btn btn-outline-primary"><a class="text-decoration-none text-reset"
+                  href="{% url 'logout' %}">Выйти</a></button>
+            </div>
+          {% else %}
+            <div class="btn-group" role="group" aria-label="Basic outlined example">
+              <button type="button" class="btn btn-outline-primary"><a class="text-decoration-none text-reset"
+                  href="{% url 'login' %}">Войти</a></button>
+              <button type="button" class="btn btn-outline-primary"><a class="text-decoration-none text-reset"
+                  href="{% url 'registration' %}">Регистрация</a></button>
+            </div>
+          {% endif %}
         </ul>
-      </div> 
+      {% endwith %}
       
     </div>
   </nav>
