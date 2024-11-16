@@ -1,4 +1,15 @@
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView
+)
 from django.shortcuts import render
+
+from deck.models import Deck
+
+PAGINATION_LIMIT = 10
 
 
 placeholder_decks = [
@@ -29,3 +40,22 @@ def index(request):
         request,
         template_name='homepage/index.html',
         context={'decks': placeholder_decks})
+
+
+class DeckListView(ListView):
+    model = Deck
+    paginate_by = PAGINATION_LIMIT
+    template_name = 'homepage/index.html'
+
+    def get_queryset(self):
+        return Deck.objects.filter(
+            user__id=self.request.user.pk
+        )
+
+    """
+    queryset = Birthday.objects.prefetch_related(
+        'tags'
+    ).select_related('author')
+    ordering = 'id'
+    paginate_by = 10
+    """

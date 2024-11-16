@@ -7,7 +7,7 @@
 <hr>
 <article class="container row">
   <h1>Колоды:</h1>
-  {% for deck in decks %}
+  {% for deck in page_obj %}
     <div class="col-4">
       <div class="card {% if deck.winrate < 0.5 %}border-danger{% endif %}">
         <h5 class="card-header">{{ deck.name }}</h5>
