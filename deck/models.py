@@ -22,6 +22,10 @@ class Deck(models.Model):
     def __str__(self):
         return self.deck_name
 
+    class Meta:
+        ordering = ('pk',)
+
+
 
 class Card(models.Model):
     deck = models.ForeignKey(
