@@ -38,9 +38,6 @@ LOGIN_URL = 'login'
 
 LOGIN_REDIRECT_URL = 'homepage:index'
 
-LOGOUT_REDIRECT_URL = 'homepage:index'
-
-
 # Application definition
 
 INSTALLED_APPS = [
