@@ -10,12 +10,12 @@
   {% for deck in page_obj %}
     <div class="col-4">
       <div class="card {% if deck.winrate < 0.5 %}border-danger{% endif %}">
-        <h5 class="card-header">{{ deck.name }}</h5>
+        <h5 class="card-header">{{ deck.deck_name }}</h5>
 
         <div class="card-body">
           <p class="card-text">
             Карт: 
-            <b>{{ deck.cards_qty }}</b>
+            <b>{{ deck.card_count }}</b>
             шт.
           </p>
           <p class="card-text {% if deck.winrate < 0.5 %}text-danger{% endif %}">

@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -50,7 +51,7 @@ class DeckListView(ListView):
     def get_queryset(self):
         return Deck.objects.filter(
             user__id=self.request.user.pk
-        )
+        ).annotate(card_count=Count('cards'))
 
     """
     queryset = Birthday.objects.prefetch_related(
