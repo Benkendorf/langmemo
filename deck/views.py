@@ -1,6 +1,7 @@
-from typing import Any
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db.models.query import QuerySet
 from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -25,6 +26,7 @@ sample_deck = {
 
 
 class CardListView(ListView):
+    model = Card
     template_name = 'deck/card_list.html'
     paginate_by = CARDS_PAGINATION_LIMIT
 
@@ -39,14 +41,40 @@ class CardListView(ListView):
         return qs
 
 
-def card_list(request, deck_id):
-    return render(
-        request,
-        template_name='deck/deck_card_list.html',
-        context={
-            'deck': sample_deck
-        }
-    )
+class CardDeleteView(DeleteView, UserPassesTestMixin):
+    model = Card
+
+    def test_func(self):
+        object = self.get_object()
+        return object.deck.user == self.request.user
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(
+            Card,
+            id=self.kwargs['card_id'],
+            deck__id=self.kwargs['deck_id']
+        )
+
+    def get_success_url(self):
+        return reverse('deck:card_list',
+                       kwargs={'deck_id': self.kwargs['deck_id']})
+
+
+class DeckDeleteView(DeleteView, UserPassesTestMixin):
+    model = Deck
+
+    def test_func(self):
+        object = self.get_object()
+        return object.user == self.request.user
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(
+            Deck,
+            id=self.kwargs['deck_id']
+        )
+
+    def get_success_url(self):
+        return reverse('homepage:index')
 
 
 def review(request, deck_id):

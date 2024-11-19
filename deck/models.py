@@ -99,7 +99,7 @@ class Card(models.Model):
 
     def save(self, *args, **kwargs):
         try:
-            self.winrate = self.right_guesses / (self.right_guesses + self.wrong_guesses)
+            self.winrate = 100 * self.right_guesses / (self.right_guesses + self.wrong_guesses)
         except ZeroDivisionError:
             self.winrate = None
 

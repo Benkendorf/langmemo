@@ -26,13 +26,25 @@
               <b>{{ deck.winrate|floatformat:2 }} %</b>
             {% endif %}
           </p>
-          {% if deck.in_queue == 0 %}
+
+          
+          <div class="hstack gap-3">
+            <a href="{% url 'deck:card_list' deck.id %}" class="btn btn-outline-secondary">&#x270e; Редактировать</a>
+            
+            <form method="POST" action="{% url 'deck:delete_deck' deck.id %}">
+              {% csrf_token %}<input class="btn btn-danger" type="submit" value="Удалить">
+            </form>
+          </div>
+
+          <hr>
+          
+          {% if deck.cards_in_queue == 0 %}
             <a class="btn btn-primary disabled">Очередь пуста</a>
           {% else %}
-            <a href="{% url 'deck:review' deck.id %}" class="btn btn-primary">Изучать {{ deck.in_queue }} шт.</a>
+            <a href="{% url 'deck:review' deck.id %}" class="btn btn-primary">Изучать {{ deck.cards_in_queue }} шт.</a>
           {% endif %}
-          <hr>
-          <a href="{% url 'deck:card_list' deck.id %}" class="btn btn-outline-secondary">&#x270e; Редактировать</a>
+
+          
         </div>
         
       </div>

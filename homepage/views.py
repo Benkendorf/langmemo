@@ -1,4 +1,4 @@
-from django.db.models import Count, Avg
+from django.db.models import Avg, Count, Q
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -54,7 +54,9 @@ class DeckListView(ListView):
         ).annotate(
             card_count=Count('cards')
         ).annotate(
-            winrate=100 * Avg('cards__winrate')
+            winrate=Avg('cards__winrate')
+        ).annotate(
+            cards_in_queue=Count('cards', filter=Q(cards__in_queue=True))
         )
 
         return qs.order_by('pk')
