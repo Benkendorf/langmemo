@@ -26,7 +26,6 @@ class Deck(models.Model):
         ordering = ('pk',)
 
 
-
 class Card(models.Model):
     deck = models.ForeignKey(
         Deck,
@@ -65,6 +64,13 @@ class Card(models.Model):
         'Количество неправильных ответов',
         default=0
     )
+    # Автоматически рассчитывается в переопределенном методе модели save()
+    winrate = models.FloatField(
+        'Доля успеха',
+        default=None,
+        null=True,
+        blank=True
+    )
     # Автоматически устанавливается при создании карты
     datetime_created = models.DateTimeField(
         'Дата создания',
@@ -90,3 +96,14 @@ class Card(models.Model):
 
     def __str__(self):
         return self.question
+
+    def save(self, *args, **kwargs):
+        try:
+            self.winrate = self.right_guesses / (self.right_guesses + self.wrong_guesses)
+        except ZeroDivisionError:
+            self.winrate = None
+
+        super().save(*args, **kwargs)
+
+    class Meta:
+        ordering = ('-datetime_created',)

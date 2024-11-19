@@ -42,13 +42,18 @@
 <article class="container row">
   
 
-  {% for card in deck.card_list %}
+  {% for card in page_obj %}
   <div class="col-4">
-    <div class="card">
-      <h5 class="card-header">{{ card }}</h5>
+    <div class="card {% if card.winrate < 0.5 %}border-danger{% endif %}">
+      <h5 class="card-header">{{ card.question }}</h5>
       <div class="card-body">
-        <p class="card-text">
+        <p class="card-text {% if card.winrate < 0.5 %}text-danger{% endif %}">
           Доля успеха:
+          {% if card.winrate == None%}
+            <b>Не было ревью!</b>
+          {% else %}
+            <b>{{ card.winrate|floatformat:2 }} %</b>
+          {% endif %}
         </p><p class="card-text">
           Уровень SRS:
         </p>

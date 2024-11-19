@@ -10,7 +10,7 @@ from django.shortcuts import render
 
 from deck.models import Deck
 
-PAGINATION_LIMIT = 10
+DECKS_PAGINATION_LIMIT = 10
 
 
 placeholder_decks = [
@@ -45,7 +45,7 @@ def index(request):
 
 class DeckListView(ListView):
     model = Deck
-    paginate_by = PAGINATION_LIMIT
+    paginate_by = DECKS_PAGINATION_LIMIT
     template_name = 'homepage/index.html'
 
     def get_queryset(self):
@@ -54,8 +54,7 @@ class DeckListView(ListView):
         ).annotate(
             card_count=Count('cards')
         ).annotate(
-            winrate=Avg('cards__right_guesses') * 100
-            / (Avg('cards__right_guesses') + Avg('cards__wrong_guesses'))
+            winrate=100 * Avg('cards__winrate')
         )
 
         return qs.order_by('pk')

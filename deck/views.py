@@ -1,5 +1,17 @@
-from django.shortcuts import render
+from typing import Any
+from django.db.models.query import QuerySet
+from django.shortcuts import get_object_or_404, render
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView
+)
 
+from .models import Card, Deck
+
+CARDS_PAGINATION_LIMIT = 20
 
 sample_deck = {
     'deck_id': 1,
@@ -10,6 +22,22 @@ sample_deck = {
         'sugondese'
     }
 }
+
+
+class CardListView(ListView):
+    template_name = 'deck/card_list.html'
+    paginate_by = CARDS_PAGINATION_LIMIT
+
+    def get_queryset(self):
+        deck = get_object_or_404(
+            Deck,
+            pk=self.kwargs['deck_id'],
+            user=self.request.user
+        )
+
+        qs = Card.objects.filter(deck=deck)
+        return qs
+
 
 def card_list(request, deck_id):
     return render(
