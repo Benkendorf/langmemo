@@ -20,15 +20,19 @@
           </p>
           <p class="card-text {% if deck.winrate < 0.5 %}text-danger{% endif %}">
             Доля успеха: 
-            <b>{{ deck.winrate }}</b>
+            {% if deck.winrate == None%}
+              <b>Не было ревью!</b>
+            {% else %}
+              <b>{{ deck.winrate|floatformat:2 }} %</b>
+            {% endif %}
           </p>
           {% if deck.in_queue == 0 %}
             <a class="btn btn-primary disabled">Очередь пуста</a>
           {% else %}
-            <a href="#" class="btn btn-primary">Изучать {{ deck.in_queue }} шт.</a>
+            <a href="{% url 'deck:review' deck.id %}" class="btn btn-primary">Изучать {{ deck.in_queue }} шт.</a>
           {% endif %}
           <hr>
-          <a href="#" class="btn btn-outline-secondary">&#x270e; Редактировать</a>
+          <a href="{% url 'deck:card_list' deck.id %}" class="btn btn-outline-secondary">&#x270e; Редактировать</a>
         </div>
         
       </div>

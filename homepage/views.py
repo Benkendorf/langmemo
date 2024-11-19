@@ -1,4 +1,4 @@
-from django.db.models import Count
+from django.db.models import Count, Avg
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -49,14 +49,13 @@ class DeckListView(ListView):
     template_name = 'homepage/index.html'
 
     def get_queryset(self):
-        return Deck.objects.filter(
+        qs = Deck.objects.filter(
             user__id=self.request.user.pk
-        ).annotate(card_count=Count('cards')).order_by('pk')
+        ).annotate(
+            card_count=Count('cards')
+        ).annotate(
+            winrate=Avg('cards__right_guesses') * 100
+            / (Avg('cards__right_guesses') + Avg('cards__wrong_guesses'))
+        )
 
-    """
-    queryset = Birthday.objects.prefetch_related(
-        'tags'
-    ).select_related('author')
-    ordering = 'id'
-    paginate_by = 10
-    """
+        return qs.order_by('pk')

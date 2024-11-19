@@ -11,7 +11,7 @@ sample_deck = {
     }
 }
 
-def deck_card_list(request, deck_id):
+def card_list(request, deck_id):
     return render(
         request,
         template_name='deck/deck_card_list.html',
