@@ -15,7 +15,7 @@
     <div class="card">
       <h5 class="card-header">Добавить новую карту</h5>
       <div class="card-body">
-        <form method="POST" action="{% url 'deck:create_card' deck.id %}">
+        <form method="post" action="{% url 'deck:create_card' deck.pk %}">
           {% csrf_token %}
           {% bootstrap_form form show_label=False %}
           <!--

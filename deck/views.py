@@ -41,8 +41,8 @@ class CardListView(ListView):
         qs = Card.objects.filter(deck=deck)
         return qs
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
         context['form'] = CardForm()
         context['deck'] = get_object_or_404(
             Deck,
@@ -61,13 +61,24 @@ class CardCreateView(CreateView):
     def form_valid(self, form):
         form.instance.deck = get_object_or_404(
             Deck,
-            id=self.kwargs['deck_id']
+            id=self.kwargs['deck_id'],
+            user=self.request.user
         )
         return super().form_valid(form)
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['deck'] = get_object_or_404(
+            Deck,
+            pk=self.kwargs['deck_id'],
+            user=self.request.user
+        )
+
+        return context
+
     def get_success_url(self):
         return reverse_lazy('deck:card_list',
-                       kwargs={'deck_id': self.kwargs['deck_id']})
+                            kwargs={'deck_id': self.kwargs['deck_id']})
 
 
 class CardDeleteView(DeleteView, UserPassesTestMixin):
