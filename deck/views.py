@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db.models.query import QuerySet
 from django.shortcuts import get_object_or_404, render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -11,6 +11,7 @@ from django.views.generic import (
 )
 
 from .models import Card, Deck
+from .forms import CardForm, DeckForm
 
 CARDS_PAGINATION_LIMIT = 20
 
@@ -39,6 +40,34 @@ class CardListView(ListView):
 
         qs = Card.objects.filter(deck=deck)
         return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = CardForm()
+        context['deck'] = get_object_or_404(
+            Deck,
+            pk=self.kwargs['deck_id'],
+            user=self.request.user
+        )
+
+        return context
+
+
+class CardCreateView(CreateView):
+    model = Card
+    form_class = CardForm
+    template_name = 'deck/card_list.html'
+
+    def form_valid(self, form):
+        form.instance.deck = get_object_or_404(
+            Deck,
+            id=self.kwargs['deck_id']
+        )
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('deck:card_list',
+                       kwargs={'deck_id': self.kwargs['deck_id']})
 
 
 class CardDeleteView(DeleteView, UserPassesTestMixin):

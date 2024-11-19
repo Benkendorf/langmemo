@@ -6,9 +6,11 @@ from django.views.generic import (
     ListView,
     UpdateView
 )
-from django.shortcuts import render
+from django.shortcuts import redirect, render
+from django.urls import reverse, reverse_lazy
 
 from deck.models import Deck
+from deck.forms import DeckForm
 
 DECKS_PAGINATION_LIMIT = 10
 
@@ -60,3 +62,22 @@ class DeckListView(ListView):
         )
 
         return qs.order_by('pk')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = DeckForm()
+
+        return context
+
+
+class DeckCreateView(CreateView):
+    model = Deck
+    form_class = DeckForm
+    template_name = 'homepage/index.html'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('homepage:index')

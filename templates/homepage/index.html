@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load django_bootstrap5 %}
 
 {% block title %}Memory Cards{% endblock %}
 
@@ -60,10 +61,14 @@
     <div class="card">
       <h5 class="card-header">Добавить новую колоду</h5>
       <div class="card-body">
-        <div class="input-group mb-3">
-          <input type="text" class="form-control" placeholder="Введите название" aria-label="Введите название" aria-describedby="basic-addon2">
-          <button class="btn btn-success" type="button" id="button-addon2">Добавить колоду</button>
-        </div>
+        <form method="POST" action="{% url 'homepage:create_deck' %}">
+          {% csrf_token %}
+          <div class="input-group mb-3">
+            <!--<input type="text" id="deck_name" class="form-control" placeholder="Введите название" aria-label="Введите название" aria-describedby="basic-addon2">-->
+            {% bootstrap_form form show_label=False %}
+            <input class="btn btn-success" type="submit" value="Добавить колоду">
+          </div>
+        </form>
       </div>
     </div>
   </div>

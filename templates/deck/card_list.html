@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load django_bootstrap5 %}
 
 {% block title %}Memory Cards{% endblock %}
 
@@ -14,11 +15,14 @@
     <div class="card">
       <h5 class="card-header">Добавить новую карту</h5>
       <div class="card-body">
-        <form>
+        <form method="POST" action="{% url 'deck:create_card' deck.id %}">
+          {% csrf_token %}
+          {% bootstrap_form form show_label=False %}
+          <!--
           <div class="mb-3">
             <input type="text" class="form-control" placeholder="Введите вопрос" aria-label="Введите вопрос" aria-describedby="basic-addon2">
           </div>
-	  Введите до трех вариантов ответа:
+	        Введите до трех вариантов ответа:
           <div class="mb-3">
             <input type="text" class="form-control" placeholder="Введите первый ответ" aria-label="Введите первый ответ" aria-describedby="basic-addon2">
           </div>
@@ -28,9 +32,9 @@
           <div class="mb-3">
             <input type="text" class="form-control" placeholder="Введите третий ответ" aria-label="Введите третий ответ" aria-describedby="basic-addon2">
           </div>
-          
+          -->
+          <input class="btn btn-success" type="submit" value="Добавить карту">
         </form>
-        <a href="#" class="btn btn-success">Добавить</a>
       </div>
     </div>
   </div>
@@ -56,6 +60,7 @@
           {% endif %}
         </p><p class="card-text">
           Уровень SRS:
+          {{ card.srs_level }}
         </p>
         <div class="hstack gap-3">
           <a href="#" class="btn btn-outline-secondary">&#x270e; Редактировать</a>
