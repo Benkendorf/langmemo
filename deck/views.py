@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
@@ -53,7 +53,7 @@ class CardListView(ListView):
         return context
 
 
-class CardCreateView(CreateView):
+class CardCreateView(LoginRequiredMixin, CreateView):
     model = Card
     form_class = CardForm
     template_name = 'deck/card_list.html'
@@ -81,7 +81,7 @@ class CardCreateView(CreateView):
                             kwargs={'deck_id': self.kwargs['deck_id']})
 
 
-class CardDeleteView(DeleteView, UserPassesTestMixin):
+class CardDeleteView(UserPassesTestMixin, DeleteView):
     model = Card
 
     def test_func(self):
@@ -100,7 +100,7 @@ class CardDeleteView(DeleteView, UserPassesTestMixin):
                        kwargs={'deck_id': self.kwargs['deck_id']})
 
 
-class DeckDeleteView(DeleteView, UserPassesTestMixin):
+class DeckDeleteView(UserPassesTestMixin, DeleteView):
     model = Deck
 
     def test_func(self):

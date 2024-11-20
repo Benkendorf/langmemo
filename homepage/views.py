@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Avg, Count, Q
 from django.views.generic import (
     CreateView,
@@ -70,7 +71,7 @@ class DeckListView(ListView):
         return context
 
 
-class DeckCreateView(CreateView):
+class DeckCreateView(LoginRequiredMixin, CreateView):
     model = Deck
     form_class = DeckForm
     template_name = 'homepage/index.html'
