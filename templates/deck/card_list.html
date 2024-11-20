@@ -5,7 +5,7 @@
 
 {% block content %}
 
-<hr>
+
 
 
 <article class="container row justify-content-center">
@@ -13,7 +13,7 @@
   <hr class="opacity-0">
   <div class="col-4">
     <div class="card">
-      <h5 class="card-header">Добавить новую карту</h5>
+      <h5 class="card-header bg-success-subtle">Добавить новую карту</h5>
       <div class="card-body">
         <form method="post" action="{% url 'deck:create_card' deck.pk %}">
           {% csrf_token %}
@@ -48,7 +48,7 @@
   {% for card in page_obj %}
   <div class="col-4">
     <div class="card {% if card.winrate < 0.5 %}border-danger{% endif %}">
-      <h5 class="card-header">{{ card.question }}</h5>
+      <h5 class="card-header bg-primary-subtle">{{ card.question }}</h5>
       <div class="card-body">
         <p class="card-text {% if card.winrate < 0.5 %}text-danger{% endif %}">
           Доля успеха:
@@ -61,6 +61,26 @@
           Уровень SRS:
           {{ card.srs_level }}
         </p>
+
+        <details>
+          <summary>Ответы</summary>
+          <ul>
+            {% if card.answer_1 is not None %}
+              <li>{{ card.answer_1 }}</li>
+            {% endif %}
+
+            {% if card.answer_2 is not None %}
+              <li>{{ card.answer_2 }}</li>
+            {% endif %}
+
+            {% if card.answer_3 is not None %}
+              <li>{{ card.answer_3 }}</li>
+            {% endif %}
+          </ul>
+        </details>
+
+        <hr class="opacity-0">
+
         <div class="hstack gap-3">
           <a href="#" class="btn btn-outline-secondary">&#x270e; Редактировать</a>
 

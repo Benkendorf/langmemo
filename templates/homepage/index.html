@@ -5,14 +5,14 @@
 
 {% block content %}
 
-<hr>
+
 
 <article class="container row justify-content-center">
   <h1>Колоды:</h1>
   <hr class="opacity-0">
   <div class="col-4">
     <div class="card">
-      <h5 class="card-header">Добавить новую колоду</h5>
+      <h5 class="card-header bg-success-subtle">Добавить новую колоду</h5>
       <div class="card-body">
         <form method="POST" action="{% url 'homepage:create_deck' %}">
           {% csrf_token %}
@@ -33,7 +33,7 @@
   {% for deck in page_obj %}
     <div class="col-4">
       <div class="card {% if deck.winrate < 0.5 %}border-danger{% endif %}">
-        <h5 class="card-header">{{ deck.deck_name }}</h5>
+        <h5 class="card-header bg-primary-subtle">{{ deck.deck_name }}</h5>
 
         <div class="card-body">
           <p class="card-text">
