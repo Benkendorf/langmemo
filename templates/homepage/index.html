@@ -6,8 +6,29 @@
 {% block content %}
 
 <hr>
+
 <article class="container row">
   <h1>Колоды:</h1>
+  <div class="col-4">
+    <div class="card">
+      <h5 class="card-header">Добавить новую колоду</h5>
+      <div class="card-body">
+        <form method="POST" action="{% url 'homepage:create_deck' %}">
+          {% csrf_token %}
+          <div class="input-group mb-3">
+            <!--<input type="text" id="deck_name" class="form-control" placeholder="Введите название" aria-label="Введите название" aria-describedby="basic-addon2">-->
+            {% bootstrap_form form show_label=False %}
+            <input class="btn btn-success" type="submit" value="Добавить колоду">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</article>
+
+<hr class="opacity-0">
+
+<article class="container row">
   {% for deck in page_obj %}
     <div class="col-4">
       <div class="card {% if deck.winrate < 0.5 %}border-danger{% endif %}">
@@ -57,23 +78,6 @@
 
   {% endfor %}
   
-  <div class="col-4">
-    <div class="card">
-      <h5 class="card-header">Добавить новую колоду</h5>
-      <div class="card-body">
-        <form method="POST" action="{% url 'homepage:create_deck' %}">
-          {% csrf_token %}
-          <div class="input-group mb-3">
-            <!--<input type="text" id="deck_name" class="form-control" placeholder="Введите название" aria-label="Введите название" aria-describedby="basic-addon2">-->
-            {% bootstrap_form form show_label=False %}
-            <input class="btn btn-success" type="submit" value="Добавить колоду">
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-  
-  
 </article>
-
+{% include "includes/paginator.html" %}
 {% endblock %}

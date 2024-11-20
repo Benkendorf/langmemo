@@ -12,7 +12,7 @@ from django.urls import reverse, reverse_lazy
 from deck.models import Deck
 from deck.forms import DeckForm
 
-DECKS_PAGINATION_LIMIT = 10
+DECKS_PAGINATION_LIMIT = 9
 
 
 placeholder_decks = [
@@ -61,7 +61,7 @@ class DeckListView(ListView):
             cards_in_queue=Count('cards', filter=Q(cards__in_queue=True))
         )
 
-        return qs.order_by('pk')
+        return qs.order_by('-pk')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -23,7 +23,7 @@ class Deck(models.Model):
         return self.deck_name
 
     class Meta:
-        ordering = ('pk',)
+        ordering = ('-pk',)
 
 
 class Card(models.Model):

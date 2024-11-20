@@ -13,7 +13,7 @@ from django.views.generic import (
 from .models import Card, Deck
 from .forms import CardForm, DeckForm
 
-CARDS_PAGINATION_LIMIT = 20
+CARDS_PAGINATION_LIMIT = 15
 
 sample_deck = {
     'deck_id': 1,
