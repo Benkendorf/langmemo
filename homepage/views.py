@@ -80,4 +80,5 @@ class DeckCreateView(CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy('homepage:index')
+        return reverse_lazy('deck:card_list',
+                            kwargs={'deck_id': self.object.id})

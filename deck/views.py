@@ -1,5 +1,4 @@
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.db.models.query import QuerySet
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
@@ -11,7 +10,7 @@ from django.views.generic import (
 )
 
 from .models import Card, Deck
-from .forms import CardForm, DeckForm
+from .forms import CardForm
 
 CARDS_PAGINATION_LIMIT = 15
 
@@ -49,6 +48,7 @@ class CardListView(ListView):
             pk=self.kwargs['deck_id'],
             user=self.request.user
         )
+        context['card_count'] = context['deck'].cards.count()
 
         return context
 
