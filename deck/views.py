@@ -1,4 +1,5 @@
 from random import choice
+from sys import maxsize
 
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
@@ -14,8 +15,10 @@ from django.views.generic import (
 
 from .models import Card, Deck
 from .forms import CardForm
+from .utils import damerau_levenshtein_distance as dam_lev_dist
 
 CARDS_PAGINATION_LIMIT = 15
+DAM_LEV_DIST_LIMIT = 1
 
 sample_deck = {
     'deck_id': 1,
@@ -154,14 +157,38 @@ def review_display(request, deck_id):
             template_name='deck/review.html',
             context=context
         )
-    # Здесь дописать функционал когда метод POST
-    # Лучше наверное сделать для проверки отдельную вьюшку с кард_ид в аргах
 
 
 def review_check(request, card_id):
-    print(request.POST) # Желательно получить ответ без bootstrap_form
+    reviewed_card = get_object_or_404(
+        Card,
+        id=card_id,
+        deck__user=request.user
+    )
+    if not reviewed_card.in_queue:
+        template_name = 'deck/review_not_in_queue.html'
+    else:
+        min_dist = maxsize
+        for ans in (reviewed_card.answer_1,
+                    reviewed_card.answer_2,
+                    reviewed_card.answer_3):
+            if ans is not None:
+                min_dist = min(
+                    min_dist,
+                    dam_lev_dist(str.lower(request.POST['answer']), str.lower(ans))
+                )
+                print(f'ANSWER = {str.lower(request.POST["answer"])}')
+                print(f'MINDIST = {min_dist}')
+                print('------')
+        if min_dist <= DAM_LEV_DIST_LIMIT:
+            template_name = 'deck/review_success.html'
+        else:
+            template_name = 'deck/review_failure.html'
 
     return render(
             request,
-            template_name='deck/review_success.html',
+            template_name=template_name,
+            context={
+                'deck': reviewed_card.deck
+            }
         )
