@@ -175,11 +175,11 @@ def review_check(request, card_id):
             if ans is not None:
                 min_dist = min(
                     min_dist,
-                    dam_lev_dist(str.lower(request.POST['answer']), str.lower(ans))
+                    dam_lev_dist(
+                        str.lower(request.POST['answer']),
+                        str.lower(ans)
+                    )
                 )
-                print(f'ANSWER = {str.lower(request.POST["answer"])}')
-                print(f'MINDIST = {min_dist}')
-                print('------')
         if min_dist <= DAM_LEV_DIST_LIMIT:
             template_name = 'deck/review_success.html'
         else:
