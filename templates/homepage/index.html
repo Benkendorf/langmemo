@@ -64,7 +64,7 @@
           {% if deck.cards_in_queue == 0 %}
             <a class="btn btn-primary disabled">Очередь пуста</a>
           {% else %}
-            <a href="{% url 'deck:review' deck.id %}" class="btn btn-primary">Изучать {{ deck.cards_in_queue }} шт.</a>
+            <a href="{% url 'deck:review_display' deck.id %}" class="btn btn-primary">Изучать {{ deck.cards_in_queue }} шт.</a>
           {% endif %}
 
           

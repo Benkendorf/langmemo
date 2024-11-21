@@ -1,3 +1,5 @@
+from random import choice
+
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect, render
@@ -129,11 +131,37 @@ class DeckDeleteView(UserPassesTestMixin, DeleteView):
         return reverse('homepage:index')
 
 
-def review(request, deck_id):
-    return render(
-        request,
-        template_name='deck/review.html',
-        context={
-            'deck': sample_deck
+def review_display(request, deck_id):
+
+    if request.method == 'GET':
+        cards_to_review = list(Card.objects.filter(
+            in_queue=True,
+            deck__id=deck_id
+        ))
+
+        if len(cards_to_review) == 0:
+            return render(
+                request,
+                template_name='deck/review_no_cards_in_queue.html'
+            )
+
+        context = {
+            'reviewed_card': choice(cards_to_review)    # random.choice
         }
-    )
+
+        return render(
+            request,
+            template_name='deck/review.html',
+            context=context
+        )
+    # Здесь дописать функционал когда метод POST
+    # Лучше наверное сделать для проверки отдельную вьюшку с кард_ид в аргах
+
+
+def review_check(request, card_id):
+    print(request.POST) # Желательно получить ответ без bootstrap_form
+
+    return render(
+            request,
+            template_name='deck/review_success.html',
+        )
