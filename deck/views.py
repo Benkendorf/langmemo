@@ -135,28 +135,26 @@ class DeckDeleteView(UserPassesTestMixin, DeleteView):
 
 
 def review_display(request, deck_id):
+    cards_to_review = list(Card.objects.filter(
+        in_queue=True,
+        deck__id=deck_id
+    ))
 
-    if request.method == 'GET':
-        cards_to_review = list(Card.objects.filter(
-            in_queue=True,
-            deck__id=deck_id
-        ))
-
-        if len(cards_to_review) == 0:
-            return render(
-                request,
-                template_name='deck/review_no_cards_in_queue.html'
-            )
-
-        context = {
-            'reviewed_card': choice(cards_to_review)    # random.choice
-        }
-
+    if len(cards_to_review) == 0:
         return render(
             request,
-            template_name='deck/review.html',
-            context=context
+            template_name='deck/review_no_cards_in_queue.html'
         )
+
+    context = {
+        'reviewed_card': choice(cards_to_review)    # random.choice
+    }
+
+    return render(
+        request,
+        template_name='deck/review.html',
+        context=context
+    )
 
 
 def review_check(request, card_id):
