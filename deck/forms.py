@@ -19,7 +19,7 @@ class CardForm(forms.ModelForm):
         ans3 = self.cleaned_data['answer_3']
 
         if not (ans1 or ans2 or ans3):
-            raise ValidationError('Введите хотя бы один вариант ответа!')
+            raise ValidationError('Введите хотя бы один ответ!')
 
 
 class DeckForm(forms.ModelForm):

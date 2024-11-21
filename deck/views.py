@@ -1,5 +1,6 @@
+from django.core.paginator import Paginator
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -57,6 +58,7 @@ class CardCreateView(LoginRequiredMixin, CreateView):
     model = Card
     form_class = CardForm
     template_name = 'deck/card_list.html'
+    paginate_by = CARDS_PAGINATION_LIMIT
 
     def form_valid(self, form):
         form.instance.deck = get_object_or_404(
@@ -67,12 +69,22 @@ class CardCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get_context_data(self, *args, **kwargs):
+        # Тут вручную передаем то же, что передается в CardListView
         context = super().get_context_data(*args, **kwargs)
         context['deck'] = get_object_or_404(
             Deck,
             pk=self.kwargs['deck_id'],
             user=self.request.user
         )
+        context['card_count'] = context['deck'].cards.count()
+
+        paginator = Paginator(
+            Card.objects.filter(deck=context['deck']),
+            self.paginate_by
+        )
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        context['page_obj'] = page_obj
 
         return context
 
