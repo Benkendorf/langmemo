@@ -13,7 +13,7 @@
       <h4 class="card-title">{{ reviewed_card }}</h4>
       <div class="input-group mb-3">
         <input type="text" class="form-control bg-success-subtle" placeholder="Правильно!" aria-label="Введите ответ" aria-describedby="button-addon2" readonly disabled>
-        <a href="{% url 'deck:review_display' deck.id %}" class="btn btn-primary" type="button" id="button-addon2">➤</a>
+        <a href="{% url 'deck:review_display' reviewed_card.deck.id %}" class="btn btn-primary" type="button" id="button-addon2">➤</a>
       </div>
     </div>
     

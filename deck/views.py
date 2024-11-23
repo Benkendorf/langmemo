@@ -194,7 +194,6 @@ def review_check(request, card_id):
             request,
             template_name=template_name,
             context={
-                'reviewed_card': reviewed_card,
-                'deck': reviewed_card.deck
+                'reviewed_card': reviewed_card
             }
         )
