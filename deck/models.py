@@ -76,10 +76,14 @@ class Card(models.Model):
         'Дата создания',
         auto_now_add=True
     )
-    # Автоматически устанавливается при сохранении карты
+    # Лучше не делать авто, т.к. дата будет ставиться и при сохранении после
+    # редактирования
     datetime_reviewed = models.DateTimeField(
         'Дата последнего ревью',
-        auto_now=True
+        default=None,
+        null=True,
+        blank=True
+        #auto_now=True
     )
     in_queue = models.BooleanField(
         'В очереди на ревью',

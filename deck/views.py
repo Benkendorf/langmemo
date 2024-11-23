@@ -1,3 +1,4 @@
+from datetime import datetime
 from random import choice
 from sys import maxsize
 
@@ -180,8 +181,14 @@ def review_check(request, card_id):
                 )
         if min_dist <= DAM_LEV_DIST_LIMIT:
             template_name = 'deck/review_success.html'
+            reviewed_card.right_guesses += 1
+            reviewed_card.srs_level += 1    # ВРЕМЕННО, ДО ПОЛНОЦЕННОЙ СИСТЕМЫ
         else:
             template_name = 'deck/review_failure.html'
+            reviewed_card.wrong_guesses += 1
+
+        reviewed_card.datetime_reviewed = datetime.now()
+        reviewed_card.save()
 
     return render(
             request,
