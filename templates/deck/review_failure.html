@@ -15,6 +15,22 @@
         <input type="text" class="form-control bg-danger-subtle" placeholder="Неправильно!" aria-label="Введите ответ" aria-describedby="button-addon2">
         <a href="{% url 'deck:review_display' deck.id %}" class="btn btn-primary" type="button" id="button-addon2">➤</a>
       </div>
+      <details>
+        <summary>Ответы</summary>
+        
+        {% if reviewed_card.answer_1 is not None %}
+          <p>{{ reviewed_card.answer_1 }}</p>
+        {% endif %}
+
+        {% if reviewed_card.answer_2 is not None %}
+          <p>{{ reviewed_card.answer_2 }}</p>
+        {% endif %}
+
+        {% if reviewed_card.answer_3 is not None %}
+          <p>{{ reviewed_card.answer_3 }}</p>
+        {% endif %}
+        
+      </details>
     </div>
     
   </div>
