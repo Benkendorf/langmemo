@@ -17,6 +17,7 @@ DECKS_PAGINATION_LIMIT = 9
 
 
 class DeckListView(ListView):
+    """Класс, отвечающий за отображение списка колод на главной."""
     model = Deck
     paginate_by = DECKS_PAGINATION_LIMIT
     template_name = 'homepage/index.html'
@@ -42,6 +43,7 @@ class DeckListView(ListView):
 
 
 class DeckCreateView(LoginRequiredMixin, CreateView):
+    """Класс, отвечающий за создание колоды."""
     model = Deck
     form_class = DeckForm
     template_name = 'homepage/index.html'

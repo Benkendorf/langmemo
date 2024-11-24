@@ -30,6 +30,7 @@ SRS_LEVELS_DICT = {
 
 
 class CardListView(ListView):
+    """Класс, отвечающий за отображение списка карт на странице колоды."""
     model = Card
     template_name = 'deck/card_list.html'
     paginate_by = CARDS_PAGINATION_LIMIT
@@ -58,6 +59,7 @@ class CardListView(ListView):
 
 
 class CardCreateView(LoginRequiredMixin, CreateView):
+    """Класс, отвечающий за создание карты."""
     model = Card
     form_class = CardForm
     template_name = 'deck/card_list.html'
@@ -97,6 +99,7 @@ class CardCreateView(LoginRequiredMixin, CreateView):
 
 
 class CardDeleteView(UserPassesTestMixin, DeleteView):
+    """Класс, отвечающий за удаление карты."""
     model = Card
 
     def test_func(self):
@@ -116,6 +119,7 @@ class CardDeleteView(UserPassesTestMixin, DeleteView):
 
 
 class DeckDeleteView(UserPassesTestMixin, DeleteView):
+    """Класс, отвечающий за удаление колоды."""
     model = Deck
 
     def test_func(self):
@@ -133,6 +137,7 @@ class DeckDeleteView(UserPassesTestMixin, DeleteView):
 
 
 def review_display(request, deck_id):
+    """Функция, отображающая очередную карту для ревью."""
     cards_to_review = list(Card.objects.filter(
         in_queue=True,
         deck__id=deck_id
@@ -156,6 +161,7 @@ def review_display(request, deck_id):
 
 
 def review_check(request, card_id):
+    """Функция, проверяющая ответ на ревью."""
     reviewed_card = get_object_or_404(
         Card,
         id=card_id,
