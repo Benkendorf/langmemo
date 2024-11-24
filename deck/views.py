@@ -20,15 +20,12 @@ from .utils import damerau_levenshtein_distance as dam_lev_dist
 
 CARDS_PAGINATION_LIMIT = 15
 DAM_LEV_DIST_LIMIT = 1
-
-sample_deck = {
-    'deck_id': 1,
-    'deck_name': 'Рофлан Колода',
-    'card_list': {
-        'ligma',
-        'sugma',
-        'sugondese'
-    }
+SRS_LEVELS_DICT = {
+    1: {'xp_to_next_lvl': 3, 'time_interval_hrs': 6},
+    2: {'xp_to_next_lvl': 5, 'time_interval_hrs': 24},
+    3: {'xp_to_next_lvl': 5, 'time_interval_hrs': 48},
+    4: {'xp_to_next_lvl': 10, 'time_interval_hrs': 72},
+    5: {'xp_to_next_lvl': None, 'time_interval_hrs': 120}
 }
 
 
