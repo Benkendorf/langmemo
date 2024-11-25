@@ -1,3 +1,6 @@
+from django.utils import timezone
+from datetime import datetime, timedelta
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Avg, Count, Q
 from django.views.generic import (
@@ -10,8 +13,9 @@ from django.views.generic import (
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 
-from deck.models import Deck
+from deck.models import Card, Deck
 from deck.forms import DeckForm
+from deck.views import SRS_LEVELS_DICT
 
 DECKS_PAGINATION_LIMIT = 9
 
@@ -23,6 +27,15 @@ class DeckListView(ListView):
     template_name = 'homepage/index.html'
 
     def get_queryset(self):
+        cards = Card.objects.filter(
+            deck__user__id=self.request.user.pk
+        )
+
+        for card in cards:
+            if (card.datetime_reviewed is None) or (timezone.now() - card.datetime_reviewed > timedelta(hours=SRS_LEVELS_DICT[card.srs_level]['time_interval_hrs'])):
+                card.in_queue = True
+                card.save()
+
         qs = Deck.objects.filter(
             user__id=self.request.user.pk
         ).annotate(

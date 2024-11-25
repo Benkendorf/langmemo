@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils import timezone
 from random import choice
 from sys import maxsize
 
@@ -21,11 +21,11 @@ from .utils import damerau_levenshtein_distance as dam_lev_dist
 CARDS_PAGINATION_LIMIT = 15
 DAM_LEV_DIST_LIMIT = 1
 SRS_LEVELS_DICT = {
-    1: {'xp_to_next_lvl': 3, 'time_interval_hrs': 6},
-    2: {'xp_to_next_lvl': 5, 'time_interval_hrs': 24},
-    3: {'xp_to_next_lvl': 5, 'time_interval_hrs': 48},
-    4: {'xp_to_next_lvl': 10, 'time_interval_hrs': 72},
-    5: {'xp_to_next_lvl': None, 'time_interval_hrs': 120}
+    0: {'xp_to_next_lvl': 3, 'time_interval_hrs': 6},
+    1: {'xp_to_next_lvl': 5, 'time_interval_hrs': 24},
+    2: {'xp_to_next_lvl': 5, 'time_interval_hrs': 48},
+    3: {'xp_to_next_lvl': 10, 'time_interval_hrs': 72},
+    4: {'xp_to_next_lvl': None, 'time_interval_hrs': 120}
 }
 
 
@@ -190,7 +190,8 @@ def review_check(request, card_id):
             template_name = 'deck/review_failure.html'
             reviewed_card.wrong_guesses += 1
 
-        reviewed_card.datetime_reviewed = datetime.now()
+        reviewed_card.datetime_reviewed = timezone.now()
+        reviewed_card.in_queue = False
         reviewed_card.save()
 
     return render(
