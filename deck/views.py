@@ -31,6 +31,7 @@ SRS_LEVELS_DICT = {
 
 
 def refresh_queue(user):
+    """Функция, актуализирующая статус in_queue всех карт пользователя"""
     cards = Card.objects.filter(
             deck__user__id=user.pk
         )
