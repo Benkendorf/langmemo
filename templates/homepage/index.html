@@ -32,7 +32,7 @@
 <article class="container row">
   {% for deck in page_obj %}
     <div class="col-4">
-      <div class="card {% if deck.winrate < 50 %}border-danger{% endif %}">
+      <div class="card {% if deck.winrate < deck_bad_winrate %}border-danger{% endif %}">
         <h5 class="card-header bg-primary-subtle">{{ deck.deck_name }}</h5>
 
         <div class="card-body">
@@ -41,7 +41,7 @@
             <b>{{ deck.card_count }}</b>
             шт.
           </p>
-          <p class="card-text {% if deck.winrate < 50 %}text-danger{% endif %}">
+          <p class="card-text {% if deck.winrate < deck_bad_winrate %}text-danger{% endif %}">
             Доля успеха: 
             {% if deck.winrate == None%}
               <b>Не было ревью!</b>

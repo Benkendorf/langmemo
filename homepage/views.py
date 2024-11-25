@@ -17,6 +17,7 @@ from deck.views import SRS_LEVELS_DICT
 from deck.views import refresh_queue
 
 DECKS_PAGINATION_LIMIT = 9
+DECK_BAD_WINRATE_LIMIT = 50
 
 
 class DeckListView(ListView):
@@ -43,6 +44,7 @@ class DeckListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = DeckForm()
+        context['deck_bad_winrate'] = DECK_BAD_WINRATE_LIMIT
 
         return context
 

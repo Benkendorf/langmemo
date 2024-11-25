@@ -14,10 +14,6 @@ class Deck(models.Model):
         'Название колоды',
         max_length=50,
     )
-    #review_in_progress = models.BooleanField(
-    #    'В процессе ревью',
-    #    default=False
-    #)
 
     def __str__(self):
         return self.deck_name

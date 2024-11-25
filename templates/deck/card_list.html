@@ -47,10 +47,10 @@
 
   {% for card in page_obj %}
   <div class="col-4">
-    <div class="card {% if card.winrate < 50 %}border-danger{% endif %}">
+    <div class="card {% if card.winrate < card_bad_winrate %}border-danger{% endif %}">
       <h5 class="card-header bg-primary-subtle">{{ card.question }}</h5>
       <div class="card-body">
-        <p class="card-text {% if card.winrate < 50 %}text-danger{% endif %}">
+        <p class="card-text {% if card.winrate < card_bad_winrate %}text-danger{% endif %}">
           Доля успеха:
           {% if card.winrate == None%}
             <b>Не было ревью!</b>

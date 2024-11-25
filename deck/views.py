@@ -20,6 +20,7 @@ from .forms import CardForm
 from .utils import damerau_levenshtein_distance as dam_lev_dist
 
 CARDS_PAGINATION_LIMIT = 15
+CARD_BAD_WINRATE_LIMIT = 50
 DAM_LEV_DIST_LIMIT = 1
 SRS_LEVELS_DICT = {
     0: {'xp_to_next_lvl': 3, 'time_interval_hrs': 6},
@@ -49,6 +50,9 @@ class CardListView(ListView):
     paginate_by = CARDS_PAGINATION_LIMIT
 
     def get_queryset(self):
+        # Для корректной отображения ответов только у кард не в очереди
+        refresh_queue(self.request.user)
+
         deck = get_object_or_404(
             Deck,
             pk=self.kwargs['deck_id'],
@@ -67,6 +71,7 @@ class CardListView(ListView):
             user=self.request.user
         )
         context['card_count'] = context['deck'].cards.count()
+        context['card_bad_winrate'] = CARD_BAD_WINRATE_LIMIT
 
         return context
 
@@ -79,6 +84,9 @@ class CardCreateView(LoginRequiredMixin, CreateView):
     paginate_by = CARDS_PAGINATION_LIMIT
 
     def form_valid(self, form):
+        # Для корректной отображения ответов только у кард не в очереди
+        refresh_queue(self.request.user)
+
         form.instance.deck = get_object_or_404(
             Deck,
             id=self.kwargs['deck_id'],
@@ -95,6 +103,7 @@ class CardCreateView(LoginRequiredMixin, CreateView):
             user=self.request.user
         )
         context['card_count'] = context['deck'].cards.count()
+        context['card_bad_winrate'] = CARD_BAD_WINRATE_LIMIT
 
         paginator = Paginator(
             Card.objects.filter(deck=context['deck']),
