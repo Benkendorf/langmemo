@@ -53,31 +53,38 @@
         <p class="card-text {% if card.winrate < card_bad_winrate %}text-danger{% endif %}">
           Доля успеха:
           {% if card.winrate == None%}
-            <b>Не было ревью!</b>
+            <b>Не было ревью</b>
           {% else %}
             <b>{{ card.winrate|floatformat:2 }} %</b>
           {% endif %}
-        </p><p class="card-text">
+        </p>
+        <p class="card-text">
           Уровень SRS:
           {{ card.srs_level }}
         </p>
+        
+        {% if card.in_queue %}
+          <p>
+            <b>Карта в очереди! Ответы недоступны!</b>
+          </p>
+        {% else %}
+          <details>
+            <summary>Ответы</summary>
+            <ul>
+              {% if card.answer_1 is not None %}
+                <li>{{ card.answer_1 }}</li>
+              {% endif %}
 
-        <details>
-          <summary>Ответы</summary>
-          <ul>
-            {% if card.answer_1 is not None %}
-              <li>{{ card.answer_1 }}</li>
-            {% endif %}
+              {% if card.answer_2 is not None %}
+                <li>{{ card.answer_2 }}</li>
+              {% endif %}
 
-            {% if card.answer_2 is not None %}
-              <li>{{ card.answer_2 }}</li>
-            {% endif %}
-
-            {% if card.answer_3 is not None %}
-              <li>{{ card.answer_3 }}</li>
-            {% endif %}
-          </ul>
-        </details>
+              {% if card.answer_3 is not None %}
+                <li>{{ card.answer_3 }}</li>
+              {% endif %}
+            </ul>
+          </details>
+        {% endif %}
 
         <hr class="opacity-0">
 
