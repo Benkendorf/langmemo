@@ -1,4 +1,5 @@
 from django.utils import timezone
+from datetime import timedelta
 from random import choice
 from sys import maxsize
 
@@ -27,6 +28,17 @@ SRS_LEVELS_DICT = {
     3: {'xp_to_next_lvl': 10, 'time_interval_hrs': 72},
     4: {'xp_to_next_lvl': None, 'time_interval_hrs': 120}
 }
+
+
+def refresh_queue(user):
+    cards = Card.objects.filter(
+            deck__user__id=user.pk
+        )
+
+    for card in cards:
+        if (card.datetime_reviewed is None) or (timezone.now() - card.datetime_reviewed > timedelta(hours=SRS_LEVELS_DICT[card.srs_level]['time_interval_hrs'])):
+            card.in_queue = True
+            card.save()
 
 
 class CardListView(ListView):
@@ -138,16 +150,15 @@ class DeckDeleteView(UserPassesTestMixin, DeleteView):
 
 def review_display(request, deck_id):
     """Функция, отображающая очередную карту для ревью."""
+    refresh_queue(request.user)
+
     cards_to_review = list(Card.objects.filter(
         in_queue=True,
         deck__id=deck_id
     ))
 
     if len(cards_to_review) == 0:
-        return render(
-            request,
-            template_name='deck/review_no_cards_in_queue.html'
-        )
+        return redirect(reverse('homepage:index'))
 
     context = {
         'reviewed_card': choice(cards_to_review)    # random.choice
