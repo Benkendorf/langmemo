@@ -197,10 +197,18 @@ def review_check(request, card_id):
         if min_dist <= DAM_LEV_DIST_LIMIT:
             template_name = 'deck/review_success.html'
             reviewed_card.right_guesses += 1
-            reviewed_card.srs_level += 1    # ВРЕМЕННО, ДО ПОЛНОЦЕННОЙ СИСТЕМЫ
+            if reviewed_card.srs_level < 4:
+                reviewed_card.srs_xp += 1
+                # По-хорошему, "больше" быть не может, но на всякий случай учтем и этот случай.
+                if reviewed_card.srs_xp >= SRS_LEVELS_DICT[reviewed_card.srs_level]['xp_to_next_lvl']:
+                    reviewed_card.srs_level += 1
+                    reviewed_card.srs_xp = 0
         else:
             template_name = 'deck/review_failure.html'
             reviewed_card.wrong_guesses += 1
+            reviewed_card.srs_xp = 0
+            if reviewed_card.srs_level > 0:
+                reviewed_card.srs_level -= 1
 
         reviewed_card.datetime_reviewed = timezone.now()
         reviewed_card.in_queue = False
