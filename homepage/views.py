@@ -27,8 +27,6 @@ class DeckListView(ListView):
     template_name = 'homepage/index.html'
 
     def get_queryset(self):
-        refresh_queue(user=self.request.user)
-
         qs = Deck.objects.filter(
             user__id=self.request.user.pk
         ).annotate(
@@ -38,6 +36,8 @@ class DeckListView(ListView):
         ).annotate(
             cards_in_queue=Count('cards', filter=Q(cards__in_queue=True))
         )
+
+        refresh_queue(user=self.request.user, deck_list=qs)
 
         return qs.order_by('-pk')
 
