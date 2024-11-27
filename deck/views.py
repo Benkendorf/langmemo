@@ -5,6 +5,7 @@ from sys import maxsize
 
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
+from django.db.models import F, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
@@ -34,14 +35,19 @@ SRS_LEVELS_DICT = {
 def refresh_queue(user, deck_list):
     """Функция, актуализирующая статус in_queue всех карт пользователя"""
     cards = Card.objects.filter(
+            Q(datetime_reviewed=None) | Q(timezone.now() - F('datetime_reviewed') > timedelta(hours=SRS_LEVELS_DICT[F('srs_level')]['time_interval_hrs'])),
             deck__user__id=user.pk,
-            deck__in=deck_list
+            deck__in=deck_list,
+            in_queue=False
         )
 
+    cards.bulk_update(True, ['in_queue'])
+    """
     for card in cards:
         if not card.in_queue and ((card.datetime_reviewed is None) or (timezone.now() - card.datetime_reviewed > timedelta(hours=SRS_LEVELS_DICT[card.srs_level]['time_interval_hrs']))):
             card.in_queue = True
             card.save(update_fields=['in_queue'])
+    """
 
 
 class CardListView(ListView):
