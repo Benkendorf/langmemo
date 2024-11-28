@@ -35,13 +35,20 @@ SRS_LEVELS_DICT = {
 def refresh_queue(user, deck_list):
     """Функция, актуализирующая статус in_queue всех карт пользователя"""
     cards = Card.objects.filter(
-            Q(datetime_reviewed=None) | Q(timezone.now() - F('datetime_reviewed') > timedelta(hours=SRS_LEVELS_DICT[F('srs_level')]['time_interval_hrs'])),
+            #Q(datetime_reviewed=None) | Q(timezone.now() - F('datetime_reviewed') > timedelta(hours=SRS_LEVELS_DICT[F('srs_level')]['time_interval_hrs'])),
             deck__user__id=user.pk,
             deck__in=deck_list,
             in_queue=False
         )
+    # Нужно сделать один запрос, апдейтящий все нужные карты,
+    # а не много запросов, каждый апдейтящий одну карту.
+    cards_to_update = []
+    for card in cards:
+        if (card.datetime_reviewed is None) or (timezone.now() - card.datetime_reviewed > timedelta(hours=SRS_LEVELS_DICT[card.srs_level]['time_interval_hrs'])):
+            card.in_queue = True
+            cards_to_update.append(card)
 
-    cards.bulk_update(True, ['in_queue'])
+    cards.bulk_update(cards_to_update, fields=['in_queue'])
     """
     for card in cards:
         if not card.in_queue and ((card.datetime_reviewed is None) or (timezone.now() - card.datetime_reviewed > timedelta(hours=SRS_LEVELS_DICT[card.srs_level]['time_interval_hrs']))):
