@@ -156,24 +156,6 @@ class CardDeleteView(UserPassesTestMixin, DeleteView):
                        kwargs={'deck_id': self.kwargs['deck_id']})
 
 
-class DeckDeleteView(UserPassesTestMixin, DeleteView):
-    """Класс, отвечающий за удаление колоды."""
-    model = Deck
-
-    def test_func(self):
-        object = self.get_object()
-        return object.user == self.request.user
-
-    def get_object(self, queryset=None):
-        return get_object_or_404(
-            Deck,
-            id=self.kwargs['deck_id']
-        )
-
-    def get_success_url(self):
-        return reverse('homepage:index')
-
-
 def review_display(request, deck_id):
     """Функция, отображающая очередную карту для ревью."""
 
@@ -205,7 +187,8 @@ def review_display(request, deck_id):
 def review_check(request, card_id):
     """Функция, проверяющая ответ на ревью."""
 
-    update_fields = ['in_queue', 'datetime_reviewed', 'srs_xp', 'srs_level']
+    update_fields = ['in_queue', 'datetime_reviewed',
+                     'srs_xp', 'srs_level', 'winrate']
 
     reviewed_card = get_object_or_404(
         Card,

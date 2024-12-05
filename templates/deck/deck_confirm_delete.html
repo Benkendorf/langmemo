@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+{% block title %}Memory Cards{% endblock %}
+
+{% block content %}
+
+<article class="container row justify-content-center">
+  <h1>Удалить колоду?</h1>
+
+  <div class="col-4">
+    <div class="card {% if deck.winrate < deck_bad_winrate %}border-danger{% endif %}">
+      <h5 class="card-header bg-primary-subtle">{{ deck.deck_name }}</h5>
+
+      <div class="card-body">
+        <p class="card-text">
+          Карт: 
+          <b>{{ deck.card_count }}</b>
+          шт.
+        </p>
+        <p class="card-text {% if deck.winrate < deck_bad_winrate %}text-danger{% endif %}">
+          Доля успеха: 
+          {% if deck.winrate == None%}
+            <b>Не было ревью!</b>
+          {% else %}
+            <b>{{ deck.winrate|floatformat:2 }} %</b>
+          {% endif %}
+        </p>
+
+        
+        <div class="hstack gap-3">          
+          <form method="POST" action="{% url 'homepage:delete_deck' deck.id %}">
+            {% csrf_token %}<input class="btn btn-danger" type="submit" value="Удалить">
+          </form>
+        </div>
+        
+      </div>
+      
+    </div>
+  </div>
+  
+</article>
+{% endblock %}

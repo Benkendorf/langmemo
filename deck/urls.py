@@ -16,11 +16,6 @@ urlpatterns = [
         views.CardDeleteView.as_view(),
         name='delete_card'
     ),
-    path(
-        '<int:deck_id>/delete_deck/',
-        views.DeckDeleteView.as_view(),
-        name='delete_deck'
-    ),
     path('<int:deck_id>/', views.CardListView.as_view(), name='card_list'),
     # мэйби 'create/' - как страница создания новой колоды
 ]

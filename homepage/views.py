@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Avg, Count, Q
 from django.views.generic import (
     CreateView,
@@ -7,7 +7,7 @@ from django.views.generic import (
     ListView,
     UpdateView
 )
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 
 from deck.models import Card, Deck
@@ -62,3 +62,21 @@ class DeckCreateView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse_lazy('deck:card_list',
                             kwargs={'deck_id': self.object.id})
+
+
+class DeckDeleteView(UserPassesTestMixin, DeleteView):
+    """Класс, отвечающий за удаление колоды."""
+    model = Deck
+
+    def test_func(self):
+        object = self.get_object()
+        return object.user == self.request.user
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(
+            Deck,
+            id=self.kwargs['deck_id']
+        )
+
+    def get_success_url(self):
+        return reverse('homepage:index')

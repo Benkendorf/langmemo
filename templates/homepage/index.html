@@ -53,10 +53,7 @@
           
           <div class="hstack gap-3">
             <a href="{% url 'deck:card_list' deck.id %}" class="btn btn-outline-secondary">&#x270e; Редактировать</a>
-            
-            <form method="POST" action="{% url 'deck:delete_deck' deck.id %}">
-              {% csrf_token %}<input class="btn btn-danger" type="submit" value="Удалить">
-            </form>
+            <a href="{% url 'homepage:delete_deck' deck.id %}" class="btn btn-danger">Удалить</a>
           </div>
 
           <hr>
