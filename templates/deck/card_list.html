@@ -90,10 +90,8 @@
 
         <div class="hstack gap-3">
           <a href="#" class="btn btn-outline-secondary">&#x270e; Редактировать</a>
-
-          <form method="POST" action="{% url 'deck:delete_card' card.deck.id card.id %}">
-            {% csrf_token %}<input class="btn btn-danger" type="submit" value="Удалить">
-          </form>
+          <a href="{% url 'deck:delete_card' card.deck.id card.id %}" class="btn btn-danger">Удалить</a>
+          
         </div>
       </div>
     </div>
