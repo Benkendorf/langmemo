@@ -16,11 +16,8 @@
       <div class="card-body">
         <form method="POST" action="{% url 'homepage:create_deck' %}">
           {% csrf_token %}
-          <div class="input-group mb-3">
-            <!--<input type="text" id="deck_name" class="form-control" placeholder="Введите название" aria-label="Введите название" aria-describedby="basic-addon2">-->
-            {% bootstrap_form form show_label=False %}
-            <input class="btn btn-success" type="submit" value="Добавить колоду">
-          </div>
+          {% bootstrap_form form show_label=False %}
+          <input class="btn btn-success" type="submit" value="Добавить колоду">
         </form>
       </div>
     </div>
