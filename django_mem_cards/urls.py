@@ -10,7 +10,6 @@ urlpatterns = [
     path('', include('homepage.urls', namespace='homepage')),
     path('about/', include('about.urls', namespace='about')),
     path('deck/', include('deck.urls', namespace='deck')),
-    #path('review/', include('review.urls', namespace='review')),
     path('admin/', admin.site.urls),
     path('auth/', include('django.contrib.auth.urls')),
     path(

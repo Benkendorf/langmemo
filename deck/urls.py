@@ -5,7 +5,11 @@ app_name = 'deck'
 
 urlpatterns = [
     path('<int:deck_id>/review/', views.review_display, name='review_display'),
-    path('review_check/<int:card_id>/', views.review_check, name='review_check'),
+    path(
+        'review_check/<int:card_id>/',
+        views.review_check,
+        name='review_check'
+    ),
     path(
         '<int:deck_id>/create_card/',
         views.CardCreateView.as_view(),
