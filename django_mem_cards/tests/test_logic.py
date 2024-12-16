@@ -17,4 +17,6 @@ def test_anon_can_signup(client, registration_data):
     assert CustomUser.objects.count() == 1
     user = CustomUser.objects.get()
     assert user.username == registration_data['username']
-    #assert user.password == registration_data['password']
+    
+    # Возможно вручную зашифровать пароль и сравнить с тем, что лежит в БД
+    # Также проверить смену пароля
