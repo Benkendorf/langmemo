@@ -1,7 +1,13 @@
+from datetime import timedelta
+from http import HTTPStatus
+
 import pytest
 
 from pytest_django.asserts import assertRedirects
+
+from django.contrib.auth.hashers import check_password
 from django.urls import reverse
+from django.utils import timezone
 from django.contrib.auth import get_user_model
 
 
@@ -16,7 +22,25 @@ def test_anon_can_signup(client, registration_data):
     assertRedirects(response, redirect_url)
     assert CustomUser.objects.count() == 1
     user = CustomUser.objects.get()
+    assert check_password(registration_data['password1'], user.password)
     assert user.username == registration_data['username']
-    
-    # Возможно вручную зашифровать пароль и сравнить с тем, что лежит в БД
-    # Также проверить смену пароля
+
+
+def test_user_can_login(deck_owner, deck_owner_client, login_data):
+    url = reverse('login')
+    response = deck_owner_client.post(url, data=login_data)
+    assert response.status_code == HTTPStatus.OK
+    assert timezone.now() - deck_owner.last_login < timedelta(seconds=1)
+
+
+def test_user_can_change_password(deck_owner, deck_owner_client,
+                                  password_change_data):
+    url = reverse('password_change')
+    redirect_url = reverse('password_change_done')
+    response = deck_owner_client.post(url, data=password_change_data)
+    assertRedirects(response, redirect_url)
+    deck_owner.refresh_from_db()
+    assert check_password(
+        password_change_data['new_password1'],
+        deck_owner.password
+    )
