@@ -5,7 +5,6 @@ from django.test.client import Client
 
 
 @pytest.fixture
-# Используем встроенную фикстуру для модели пользователей django_user_model.
 def deck_owner(django_user_model):
     return django_user_model.objects.create(
         username='deck_owner',
@@ -14,22 +13,9 @@ def deck_owner(django_user_model):
 
 
 @pytest.fixture
-def not_deck_owner(django_user_model):
-    return django_user_model.objects.create(username='some_guy')
-
-
-@pytest.fixture
-def deck_owner_client(deck_owner):  # Вызываем фикстуру автора.
-    # Создаём новый экземпляр клиента, чтобы не менять глобальный.
+def deck_owner_client(deck_owner):
     client = Client()
-    client.force_login(deck_owner)  # Логиним автора в клиенте.
-    return client
-
-
-@pytest.fixture
-def not_deck_owner_client(not_deck_owner):
-    client = Client()
-    client.force_login(not_deck_owner)  # Логиним обычного пользователя в клиенте.
+    client.force_login(deck_owner)
     return client
 
 
