@@ -5,74 +5,107 @@
 
 {% block content %}
 
+{% if not user.is_authenticated %}
+  <article class="container row justify-content-center">
+    <div class="col-6">
 
-
-<article class="container row justify-content-center">
-  <h1>Колоды:</h1>
-  <hr class="opacity-0">
-  <div class="col-4">
-    <div class="card">
-      <h5 class="card-header bg-success-subtle">Добавить новую колоду</h5>
-      <div class="card-body">
-        <form method="POST" action="{% url 'homepage:create_deck' %}">
-          {% csrf_token %}
-          {% bootstrap_form form show_label=False %}
-          <input class="btn btn-success" type="submit" value="Добавить колоду">
-        </form>
-      </div>
-    </div>
-  </div>
-</article>
-
-<hr class="opacity-0">
-
-<article class="container row">
-  {% for deck in page_obj %}
-    <div class="col-4">
-      <div class="card {% if deck.winrate < deck_bad_winrate %}border-danger{% endif %}">
-        <h5 class="card-header bg-primary-subtle">{{ deck.deck_name }}</h5>
-
+      <div class="card text-center">
+        <div class="card-header">
+          Добро пожаловать!
+        </div>
         <div class="card-body">
-          <p class="card-text">
-            Карт: 
-            <b>{{ deck.card_count }}</b>
-            шт.
-          </p>
-          <p class="card-text {% if deck.winrate < deck_bad_winrate %}text-danger{% endif %}">
-            Доля успеха: 
-            {% if deck.winrate == None%}
-              <b>Не было ревью!</b>
-            {% else %}
-              <b>{{ deck.winrate|floatformat:2 }} %</b>
-            {% endif %}
-          </p>
-
+          <h5 class="card-title">Начните эффективно изучать иностранные языки!</h5>
+          <p class="card-text">Составьте колоды с лексикой, а Memory Cards сделает остальное.</p>
           
-          <div class="hstack gap-3">
-            <a href="{% url 'deck:card_list' deck.id %}" class="btn btn-outline-secondary">&#x270e; Редактировать</a>
-            <a href="{% url 'homepage:delete_deck' deck.id %}" class="btn btn-danger">Удалить</a>
+          <div class="row justify-content-center">
+            <div class="vstack">
+              <label for="homepage-login-button">Уже есть аккаунт?</label>
+              <a href="{% url 'login' %}" id="homepage-login-button" class="btn btn-primary">Войти</a>
+              <hr>
+              <a href="{% url 'registration' %}" class="btn btn-primary">Зарегистрироваться</a>
+            </div>
           </div>
 
-          <hr>
-          
-          {% if deck.cards_in_queue == 0 %}
-            <a class="btn btn-primary disabled">Очередь пуста</a>
-          {% else %}
-            <a href="{% url 'deck:review_display' deck.id %}" class="btn btn-primary">Изучать {{ deck.cards_in_queue }} шт.</a>
-          {% endif %}
-
-          
         </div>
-        
+        <div class="card-footer text-body-secondary">
+          Memory Cards
+        </div>
       </div>
+
     </div>
 
-  {% if forloop.counter|divisibleby:"3" %}
-    <hr class="opacity-0">
-  {% endif %}
+  </article>
+{% else %}
 
-  {% endfor %}
-  
-</article>
-{% include "includes/paginator.html" %}
+  <article class="container row justify-content-center">
+    <h1>Колоды:</h1>
+    <hr class="opacity-0">
+    <div class="col-4">
+      <div class="card">
+        <h5 class="card-header bg-success-subtle">Добавить новую колоду</h5>
+        <div class="card-body">
+          <form method="POST" action="{% url 'homepage:create_deck' %}">
+            {% csrf_token %}
+            {% bootstrap_form form show_label=False %}
+            <input class="btn btn-success" type="submit" value="Добавить колоду">
+          </form>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <hr class="opacity-0">
+
+  <article class="container row">
+    {% for deck in page_obj %}
+      <div class="col-4">
+        <div class="card {% if deck.winrate < deck_bad_winrate %}border-danger{% endif %}">
+          <h5 class="card-header bg-primary-subtle">{{ deck.deck_name }}</h5>
+
+          <div class="card-body">
+            <p class="card-text">
+              Карт: 
+              <b>{{ deck.card_count }}</b>
+              шт.
+            </p>
+            <p class="card-text {% if deck.winrate < deck_bad_winrate %}text-danger{% endif %}">
+              Доля успеха: 
+              {% if deck.winrate == None%}
+                <b>Не было ревью!</b>
+              {% else %}
+                <b>{{ deck.winrate|floatformat:2 }} %</b>
+              {% endif %}
+            </p>
+
+            
+            <div class="hstack gap-3">
+              <a href="{% url 'deck:card_list' deck.id %}" class="btn btn-outline-secondary">&#x270e; Редактировать</a>
+              <a href="{% url 'homepage:delete_deck' deck.id %}" class="btn btn-danger">Удалить</a>
+            </div>
+
+            <hr>
+            
+            {% if deck.cards_in_queue == 0 %}
+              <a class="btn btn-primary disabled">Очередь пуста</a>
+            {% else %}
+              <a href="{% url 'deck:review_display' deck.id %}" class="btn btn-primary">Изучать {{ deck.cards_in_queue }} шт.</a>
+            {% endif %}
+
+            
+          </div>
+          
+        </div>
+      </div>
+
+    {% if forloop.counter|divisibleby:"3" %}
+      <hr class="opacity-0">
+    {% endif %}
+
+    {% endfor %}
+    
+  </article>
+  {% include "includes/paginator.html" %}
+
+{% endif %}
+
 {% endblock %}
