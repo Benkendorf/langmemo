@@ -1,5 +1,5 @@
 # Тут тесты, что на главную выводятся нужные колоды.
-
+import pytest
 from django.urls import reverse
 
 from deck.models import Card
@@ -22,6 +22,14 @@ def test_deck_is_on_homepage(deck_owner_client, cards):
     ).count()
 
 
-def test_deck_is_not_on_anon_homepage(not_deck_owner_client, cards):
-    response = not_deck_owner_client.get(reverse('homepage:index'))
+@pytest.mark.parametrize(
+    'parametrized_client',
+    (
+        pytest.lazy_fixture('client'),
+        pytest.lazy_fixture('not_deck_owner_client'),
+    )
+)
+def test_deck_is_not_on_other_user_or_anon_homepage(parametrized_client,
+                                                    cards):
+    response = parametrized_client.get(reverse('homepage:index'))
     assert len(response.context['object_list']) == 0
