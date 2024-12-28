@@ -20,3 +20,8 @@ def test_deck_is_on_homepage(deck_owner_client, cards):
         deck=page_obj[0],
         in_queue=True
     ).count()
+
+
+def test_deck_is_not_on_anon_homepage(not_deck_owner_client, cards):
+    response = not_deck_owner_client.get(reverse('homepage:index'))
+    assert len(response.context['object_list']) == 0
