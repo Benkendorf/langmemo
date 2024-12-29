@@ -45,6 +45,13 @@ def deck(deck_owner):
 
 
 @pytest.fixture
+def data_for_deck():
+    return {
+        'deck_name': 'test_deck'
+    }
+
+
+@pytest.fixture
 def deck_id_for_args(deck):
     return (deck.id, )
 

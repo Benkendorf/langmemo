@@ -21,5 +21,4 @@ urlpatterns = [
         name='delete_card'
     ),
     path('<int:deck_id>/', views.CardListView.as_view(), name='card_list'),
-    # мэйби 'create/' - как страница создания новой колоды
 ]
