@@ -16,7 +16,7 @@ urlpatterns = [
         name='create_card'
     ),
     path(
-        '<int:deck_id>/delete_card/<int:card_id>/',
+        'delete_card/<int:card_id>/',
         views.CardDeleteView.as_view(),
         name='delete_card'
     ),

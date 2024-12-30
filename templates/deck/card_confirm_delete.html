@@ -52,7 +52,7 @@
       <hr class="opacity-0">
 
       <div class="hstack gap-3">
-        <form method="POST" action="{% url 'deck:delete_card' card.deck.id card.id %}">
+        <form method="POST" action="{% url 'deck:delete_card' card.id %}">
           {% csrf_token %}<input class="btn btn-danger" type="submit" value="Удалить">
         </form>
       </div>

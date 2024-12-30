@@ -142,18 +142,18 @@ class CardDeleteView(UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         object = self.get_object()
+        self.deck_id = object.deck.id
         return object.deck.user == self.request.user
 
     def get_object(self, queryset=None):
         return get_object_or_404(
             Card,
             id=self.kwargs['card_id'],
-            deck__id=self.kwargs['deck_id']
         )
 
     def get_success_url(self):
         return reverse('deck:card_list',
-                       kwargs={'deck_id': self.kwargs['deck_id']})
+                       kwargs={'deck_id': self.deck_id})
 
 
 def review_display(request, deck_id):
