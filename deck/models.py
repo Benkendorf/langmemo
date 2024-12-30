@@ -79,7 +79,6 @@ class Card(models.Model):
         default=None,
         null=True,
         blank=True
-        #auto_now=True
     )
     in_queue = models.BooleanField(
         'В очереди на ревью',
@@ -99,7 +98,8 @@ class Card(models.Model):
 
     def save(self, *args, **kwargs):
         try:
-            self.winrate = 100 * self.right_guesses / (self.right_guesses + self.wrong_guesses)
+            self.winrate = (100 * self.right_guesses
+                            / (self.right_guesses + self.wrong_guesses))
         except ZeroDivisionError:
             self.winrate = None
 

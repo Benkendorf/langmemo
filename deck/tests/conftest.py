@@ -87,3 +87,13 @@ def cards(deck):
         )
     ]
     return all_cards
+
+
+@pytest.fixture
+def card_not_in_queue_id_for_args(cards):
+    return (cards[0].id, )
+
+
+@pytest.fixture
+def card_in_queue_id_for_args(cards):
+    return (cards[1].id, )

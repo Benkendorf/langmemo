@@ -5,15 +5,12 @@ from sys import maxsize
 
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
-from django.db.models import F, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
     CreateView,
     DeleteView,
-    DetailView,
-    ListView,
-    UpdateView
+    ListView
 )
 
 from .models import Card, Deck
@@ -23,7 +20,7 @@ from .utils import damerau_levenshtein_distance as dam_lev_dist
 CARDS_PAGINATION_LIMIT = 15
 CARD_BAD_WINRATE_LIMIT = 50
 DAM_LEV_DIST_LIMIT = 1
-SRS_LEVELS_DICT = {
+SRS_LEVELS = {
     0: {'xp_to_next_lvl': 3, 'time_interval_hrs': 6},
     1: {'xp_to_next_lvl': 5, 'time_interval_hrs': 24},
     2: {'xp_to_next_lvl': 5, 'time_interval_hrs': 48},
@@ -31,11 +28,16 @@ SRS_LEVELS_DICT = {
     4: {'xp_to_next_lvl': None, 'time_interval_hrs': 120}
 }
 
+REVIEW_SUCCESS_MESSAGE = 'Правильно!'
+REVIEW_FAILURE_MESSAGE = 'Неправильно!'
+REVIEW_NOT_IN_QUEUE_MESSAGE = 'Упс! Карты уже нет в очереди!'
+
 
 def refresh_queue(user, deck_list):
-    """Функция, актуализирующая статус in_queue всех карт пользователя"""
+    """Функция, актуализирующая статус in_queue
+    карт пользователя из deck_list."""
+
     cards = Card.objects.filter(
-            #Q(datetime_reviewed=None) | Q(timezone.now() - F('datetime_reviewed') > timedelta(hours=SRS_LEVELS_DICT[F('srs_level')]['time_interval_hrs'])),
             deck__user__id=user.pk,
             deck__in=deck_list,
             in_queue=False
@@ -44,17 +46,11 @@ def refresh_queue(user, deck_list):
     # а не много запросов, каждый апдейтящий одну карту.
     cards_to_update = []
     for card in cards:
-        if (card.datetime_reviewed is None) or (timezone.now() - card.datetime_reviewed > timedelta(hours=SRS_LEVELS_DICT[card.srs_level]['time_interval_hrs'])):
+        if (card.datetime_reviewed is None) or (timezone.now() - card.datetime_reviewed > timedelta(hours=SRS_LEVELS[card.srs_level]['time_interval_hrs'])):
             card.in_queue = True
             cards_to_update.append(card)
 
     cards.bulk_update(cards_to_update, fields=['in_queue'])
-    """
-    for card in cards:
-        if not card.in_queue and ((card.datetime_reviewed is None) or (timezone.now() - card.datetime_reviewed > timedelta(hours=SRS_LEVELS_DICT[card.srs_level]['time_interval_hrs']))):
-            card.in_queue = True
-            card.save(update_fields=['in_queue'])
-    """
 
 
 class CardListView(ListView):
@@ -92,6 +88,9 @@ class CardCreateView(LoginRequiredMixin, CreateView):
     form_class = CardForm
     template_name = 'deck/card_list.html'
     paginate_by = CARDS_PAGINATION_LIMIT
+
+    def get(self, *args, **kwargs):
+        return redirect(reverse_lazy('homepage:index'))
 
     def form_valid(self, form):
         self.deck = get_object_or_404(
@@ -161,7 +160,8 @@ def review_display(request, deck_id):
 
     deck = get_object_or_404(
         Deck,
-        id=deck_id
+        id=deck_id,
+        user=request.user
     )
     refresh_queue(user=request.user, deck_list=(deck,))
 
@@ -187,6 +187,9 @@ def review_display(request, deck_id):
 def review_check(request, card_id):
     """Функция, проверяющая ответ на ревью."""
 
+    if request.method == 'GET':
+        return redirect(reverse_lazy('homepage:index'))
+
     update_fields = ['in_queue', 'datetime_reviewed',
                      'srs_xp', 'srs_level', 'winrate']
 
@@ -197,6 +200,7 @@ def review_check(request, card_id):
     )
     if not reviewed_card.in_queue:
         template_name = 'deck/review_not_in_queue.html'
+        message_to_send = REVIEW_NOT_IN_QUEUE_MESSAGE
     else:
         min_dist = maxsize
         for ans in (reviewed_card.answer_1,
@@ -212,16 +216,19 @@ def review_check(request, card_id):
                 )
         if min_dist <= DAM_LEV_DIST_LIMIT:
             template_name = 'deck/review_success.html'
+            message_to_send = REVIEW_SUCCESS_MESSAGE
             reviewed_card.right_guesses += 1
             update_fields.append('right_guesses')
             if reviewed_card.srs_level < 4:
                 reviewed_card.srs_xp += 1
-                # По-хорошему, "больше" быть не может, но на всякий случай учтем и этот случай.
-                if reviewed_card.srs_xp >= SRS_LEVELS_DICT[reviewed_card.srs_level]['xp_to_next_lvl']:
+                # По-хорошему, "больше" быть не может,
+                # но на всякий случай учтем и этот случай.
+                if reviewed_card.srs_xp >= SRS_LEVELS[reviewed_card.srs_level]['xp_to_next_lvl']:
                     reviewed_card.srs_level += 1
                     reviewed_card.srs_xp = 0
         else:
             template_name = 'deck/review_failure.html'
+            message_to_send = REVIEW_FAILURE_MESSAGE
             reviewed_card.wrong_guesses += 1
             update_fields.append('wrong_guesses')
             reviewed_card.srs_xp = 0
@@ -236,6 +243,7 @@ def review_check(request, card_id):
             request,
             template_name=template_name,
             context={
-                'reviewed_card': reviewed_card
+                'reviewed_card': reviewed_card,
+                'message': message_to_send
             }
         )

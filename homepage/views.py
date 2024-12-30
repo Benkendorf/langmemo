@@ -3,16 +3,13 @@ from django.db.models import Avg, Count, Q
 from django.views.generic import (
     CreateView,
     DeleteView,
-    DetailView,
-    ListView,
-    UpdateView
+    ListView
 )
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 
-from deck.models import Card, Deck
+from deck.models import Deck
 from deck.forms import DeckForm
-from deck.views import SRS_LEVELS_DICT
 
 from deck.views import refresh_queue
 
