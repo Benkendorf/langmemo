@@ -4,6 +4,7 @@ from random import choice
 from sys import maxsize
 
 from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
@@ -53,7 +54,7 @@ def refresh_queue(user, deck_list):
     cards.bulk_update(cards_to_update, fields=['in_queue'])
 
 
-class CardListView(ListView):
+class CardListView(LoginRequiredMixin, ListView):
     """Класс, отвечающий за отображение списка карт на странице колоды."""
     model = Card
     template_name = 'deck/card_list.html'
@@ -155,6 +156,7 @@ class CardDeleteView(UserPassesTestMixin, DeleteView):
                        kwargs={'deck_id': self.deck_id})
 
 
+@login_required
 def review_display(request, deck_id):
     """Функция, отображающая очередную карту для ревью."""
 

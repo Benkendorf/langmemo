@@ -103,3 +103,39 @@ def test_card_list_pages_redirects_for_other_user(name, args, expected_status,
     response = not_deck_owner_client.get(url)
     assert response.status_code == expected_status
     assertRedirects(response, redirect_url)
+
+
+@pytest.mark.parametrize(
+    'name, args, expected_status, redirect_name',
+    (
+        ('deck:card_list',
+         pytest.lazy_fixture('deck_id_for_args'),
+         HTTPStatus.FOUND,
+         'login'),
+
+        ('deck:create_card',
+         pytest.lazy_fixture('deck_id_for_args'),
+         HTTPStatus.FOUND,
+         'login'),
+
+        ('deck:delete_card',
+         pytest.lazy_fixture('card_not_in_queue_id_for_args'),
+         HTTPStatus.FOUND,
+         'login'),
+
+        ('deck:review_display',
+         pytest.lazy_fixture('deck_id_for_args'),
+         HTTPStatus.FOUND,
+         'login'),
+    ),
+)
+def test_card_list_redirects_for_anon(name, args, expected_status, client,
+                                      redirect_name,
+                                      cards,):
+    url = reverse(name, args=args)
+    redirect_url = reverse(redirect_name) + '?next=' + url
+    response = client.get(url)
+    assertRedirects(response, redirect_url)
+    assert response.status_code == expected_status
+
+#/auth/login/?next=/deck/1/create_card/
