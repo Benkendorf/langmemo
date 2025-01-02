@@ -2,6 +2,7 @@
 import pytest
 from django.urls import reverse
 
+from deck.forms import DeckForm
 from deck.models import Card
 
 
@@ -14,7 +15,7 @@ def test_deck_is_on_homepage(deck_owner_client, cards):
     winrate = page_obj[0].winrate
     cards_in_queue = page_obj[0].cards_in_queue
     assert deck_count == 1
-    assert card_count == 2
+    assert card_count == len(cards)
     assert winrate == sum(card.winrate for card in cards)/len(cards)
     assert cards_in_queue == Card.objects.filter(
         deck=page_obj[0],
@@ -33,3 +34,10 @@ def test_deck_is_not_on_other_user_or_anon_homepage(parametrized_client,
                                                     cards):
     response = parametrized_client.get(reverse('homepage:index'))
     assert len(response.context['object_list']) == 0
+
+
+def test_homepage_contains_form(deck_owner_client):
+    url = reverse('homepage:index')
+    response = deck_owner_client.get(url)
+    assert 'form' in response.context
+    assert isinstance(response.context['form'], DeckForm)

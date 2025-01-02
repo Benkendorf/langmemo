@@ -67,7 +67,7 @@ def cards(deck):
             answer_3='first_test_answer_3',
             right_guesses=3,
             wrong_guesses=1,
-            datetime_created=timezone.now() - timedelta(days=15),
+            datetime_created=timezone.now() - timedelta(days=20),
             datetime_reviewed=timezone.now() - timedelta(hours=1),
             srs_level=0,
             srs_xp=0

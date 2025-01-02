@@ -137,5 +137,3 @@ def test_card_list_redirects_for_anon(name, args, expected_status, client,
     response = client.get(url)
     assertRedirects(response, redirect_url)
     assert response.status_code == expected_status
-
-#/auth/login/?next=/deck/1/create_card/
