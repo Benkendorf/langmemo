@@ -1,13 +1,14 @@
 # Здесь протестировать:
 
-# Добавление карты
-# Удаление карты
+# Добавление карты +
+# Удаление карты +
 # Обновление инфы в карте после ревью
 # Обновление статуса in_queue
 #
 # Анон не может ничего делать
 
 from datetime import timedelta
+from http import HTTPStatus
 
 import pytest
 from django.urls import reverse
@@ -15,19 +16,42 @@ from django.utils import timezone
 from pytest_django.asserts import assertRedirects
 from deck.models import Card
 
-@pytest.mark.django_db
-def test_anonymous_user_cant_create_card(client, deck_id_for_args,
-                                         data_for_card):
+@pytest.mark.parametrize(
+    'data',
+    (
+        pytest.lazy_fixture('data_for_card'),
+        pytest.lazy_fixture('no_answers_data_for_card'),
+    ),
+)
+def test_anon_cant_create_card(client, deck_id_for_args, data):
     url = reverse('deck:create_card', args=deck_id_for_args)
-    client.post(url, data=data_for_card)
+    client.post(url, data=data)
     card_count = Card.objects.count()
     assert card_count == 0
 
 
-def test_user_can_create_card_with_correct_data(deck_owner_client,
-                                                deck,
-                                                deck_id_for_args,
-                                                data_for_card):
+@pytest.mark.parametrize(
+    'data',
+    (
+        pytest.lazy_fixture('data_for_card'),
+        pytest.lazy_fixture('no_answers_data_for_card'),
+    ),
+)
+def test_not_deck_owner_cant_create_card(not_deck_owner_client,
+                                         deck_id_for_args, data):
+    url = reverse('deck:create_card', args=deck_id_for_args)
+    response = not_deck_owner_client.post(url, data=data)
+    card_count = Card.objects.count()
+    assert card_count == 0
+    assert response.status_code == HTTPStatus.NOT_FOUND
+
+
+def test_deck_owner_can_create_card_with_correct_data(
+        deck_owner_client,
+        deck,
+        deck_id_for_args,
+        data_for_card):
+
     url = reverse('deck:create_card', args=deck_id_for_args)
     response = deck_owner_client.post(url, data=data_for_card)
 
@@ -47,3 +71,50 @@ def test_user_can_create_card_with_correct_data(deck_owner_client,
     assert card.winrate is None
     assert card.datetime_reviewed is None
     assert card.datetime_created - rough_dt_created < timedelta(seconds=1)
+
+
+def test_deck_owner_cant_create_card_with_incorrect_data(
+        deck_owner_client,
+        deck_id_for_args,
+        no_answers_data_for_card):
+
+    url = reverse('deck:create_card', args=deck_id_for_args)
+    deck_owner_client.post(url, data=no_answers_data_for_card)
+    card_count = Card.objects.count()
+    assert card_count == 0
+
+
+def test_deck_owner_can_delete_card(
+        deck_owner_client,
+        deck_id_for_args,
+        cards,
+        card_not_in_queue_id_for_args):
+
+    url = reverse('deck:delete_card', args=card_not_in_queue_id_for_args)
+    response = deck_owner_client.post(url)
+    card_count = Card.objects.count()
+    assert card_count == len(cards) - 1
+    assert not Card.objects.filter(
+        id=card_not_in_queue_id_for_args[0]
+    ).exists()
+    assertRedirects(response, reverse('deck:card_list', args=deck_id_for_args))
+
+
+def test_anon_cant_delete_card(
+        client,
+        cards,
+        card_not_in_queue_id_for_args):
+    url = reverse('deck:delete_card', args=card_not_in_queue_id_for_args)
+    client.post(url)
+    card_count = Card.objects.count()
+    assert card_count == len(cards)
+
+
+def test_not_deck_owner_cant_delete_card(
+        not_deck_owner_client,
+        cards,
+        card_not_in_queue_id_for_args):
+    url = reverse('deck:delete_card', args=card_not_in_queue_id_for_args)
+    not_deck_owner_client.post(url)
+    card_count = Card.objects.count()
+    assert card_count == len(cards)
