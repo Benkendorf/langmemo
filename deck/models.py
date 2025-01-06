@@ -82,7 +82,7 @@ class Card(models.Model):
     )
     in_queue = models.BooleanField(
         'В очереди на ревью',
-        default=False
+        default=True
     )
     srs_level = models.PositiveSmallIntegerField(
         'Уровень SRS',

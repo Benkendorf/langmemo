@@ -47,7 +47,7 @@ def refresh_queue(user, deck_list):
     # а не много запросов, каждый апдейтящий одну карту.
     cards_to_update = []
     for card in cards:
-        if (card.datetime_reviewed is None) or (timezone.now() - card.datetime_reviewed > timedelta(hours=SRS_LEVELS[card.srs_level]['time_interval_hrs'])):
+        if timezone.now() - card.datetime_reviewed > timedelta(hours=SRS_LEVELS[card.srs_level]['time_interval_hrs']):
             card.in_queue = True
             cards_to_update.append(card)
 

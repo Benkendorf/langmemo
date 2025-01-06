@@ -3,6 +3,8 @@
 # Добавление карты +
 # Удаление карты +
 # Обновление инфы в карте после ревью
+# Проверить, что работают все три варианта ответа
+# Проверка работы Дам-Лев
 # Обновление статуса in_queue
 #
 # Анон не может ничего делать
@@ -15,6 +17,11 @@ from django.urls import reverse
 from django.utils import timezone
 from pytest_django.asserts import assertRedirects
 from deck.models import Card
+from deck.views import (SRS_LEVELS,
+                        REVIEW_SUCCESS_MESSAGE,
+                        REVIEW_FAILURE_MESSAGE,
+                        REVIEW_NOT_IN_QUEUE_MESSAGE)
+
 
 @pytest.mark.parametrize(
     'data',
@@ -118,3 +125,26 @@ def test_not_deck_owner_cant_delete_card(
     not_deck_owner_client.post(url)
     card_count = Card.objects.count()
     assert card_count == len(cards)
+
+
+@pytest.mark.parametrize(
+    'card, card_id, response_message',
+    (
+        (pytest.lazy_fixture('rev_card_0'), 1, REVIEW_NOT_IN_QUEUE_MESSAGE),
+        (pytest.lazy_fixture('rev_card_1'), 2, REVIEW_SUCCESS_MESSAGE)
+    ),
+)
+def test_reviewed_card_info_updates(deck_owner_client,
+                                    cards_for_review_testing,
+                                    card, card_id, response_message):
+    url = reverse('deck:review_check', args=(card_id,))
+    response = deck_owner_client.post(
+        url,
+        data={
+            'answer': card.answer_1
+        }
+    )
+    print(card)
+    print(card.id)
+    assert card == cards_for_review_testing[card_id - 1]
+    assert response.context['message'] == response_message
