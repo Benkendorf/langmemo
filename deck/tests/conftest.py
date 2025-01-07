@@ -144,10 +144,34 @@ def cards_for_review_testing(deck):
             right_guesses=0,
             wrong_guesses=0,
             datetime_created=timezone.now() - timedelta(days=15),
-            datetime_reviewed=timezone.now() - timedelta(hours=6, minutes=1),
             srs_level=0,
             srs_xp=0
+        ),
+        Card.objects.create(                           # IN QUEUE
+            deck=deck,
+            question='third_rev_question',
+            answer_1='third_rev_answer_1',
+            answer_2='third_rev_answer_2',
+            answer_3='third_rev_answer_3',
+            right_guesses=0,
+            wrong_guesses=0,
+            datetime_created=timezone.now() - timedelta(days=15),
+            srs_level=0,
+            srs_xp=2            # После правильного ответа - плюс уровень
+        ),
+        Card.objects.create(                           # IN QUEUE
+            deck=deck,
+            question='fourth_rev_question',
+            answer_1='fourth_rev_answer_1',
+            answer_2='fourth_rev_answer_2',
+            answer_3='fourth_rev_answer_3',
+            right_guesses=0,
+            wrong_guesses=0,
+            datetime_created=timezone.now() - timedelta(days=15),
+            srs_level=4,
+            srs_xp=0        # На максимальном 4м уровне опыт не прибавляется
         )
+
     ]
     return all_cards
 
@@ -160,3 +184,13 @@ def rev_card_0(cards_for_review_testing):
 @pytest.fixture
 def rev_card_1(cards_for_review_testing):
     return cards_for_review_testing[1]
+
+
+@pytest.fixture
+def rev_card_2(cards_for_review_testing):
+    return cards_for_review_testing[2]
+
+
+@pytest.fixture
+def rev_card_3(cards_for_review_testing):
+    return cards_for_review_testing[3]

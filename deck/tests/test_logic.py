@@ -2,7 +2,8 @@
 
 # Добавление карты +
 # Удаление карты +
-# Обновление инфы в карте после ревью
+# Обновление инфы в карте после успешного ревью +
+# Обновление инфы в карте после проваленного ревью +
 # Проверить, что работают все три варианта ответа
 # Проверка работы Дам-Лев
 # Обновление статуса in_queue
@@ -62,8 +63,6 @@ def test_deck_owner_can_create_card_with_correct_data(
     url = reverse('deck:create_card', args=deck_id_for_args)
     response = deck_owner_client.post(url, data=data_for_card)
 
-    rough_dt_created = timezone.now()
-
     assertRedirects(response, reverse('deck:card_list', args=deck_id_for_args))
     card_count = Card.objects.count()
     assert card_count == 1
@@ -77,7 +76,7 @@ def test_deck_owner_can_create_card_with_correct_data(
     assert card.wrong_guesses == 0
     assert card.winrate is None
     assert card.datetime_reviewed is None
-    assert card.datetime_created - rough_dt_created < timedelta(seconds=1)
+    assert card.datetime_created - timezone.now() < timedelta(seconds=1)
 
 
 def test_deck_owner_cant_create_card_with_incorrect_data(
@@ -128,23 +127,113 @@ def test_not_deck_owner_cant_delete_card(
 
 
 @pytest.mark.parametrize(
-    'card, card_id, response_message',
+    ('card, card_id, response_message, plus_right_answers, new_srs_xp,'
+     'new_srs_level'),
     (
-        (pytest.lazy_fixture('rev_card_0'), 1, REVIEW_NOT_IN_QUEUE_MESSAGE),
-        (pytest.lazy_fixture('rev_card_1'), 2, REVIEW_SUCCESS_MESSAGE)
+        (pytest.lazy_fixture('rev_card_0'),
+         1,
+         REVIEW_NOT_IN_QUEUE_MESSAGE,
+         0,
+         0,
+         0),
+
+        (pytest.lazy_fixture('rev_card_1'),
+         2,
+         REVIEW_SUCCESS_MESSAGE,
+         1,
+         1,
+         0),
+
+        (pytest.lazy_fixture('rev_card_2'),
+         3,
+         REVIEW_SUCCESS_MESSAGE,
+         1,
+         0,
+         1),
+
+        (pytest.lazy_fixture('rev_card_3'),
+         4,
+         REVIEW_SUCCESS_MESSAGE,
+         1,
+         0,
+         4)
     ),
 )
-def test_reviewed_card_info_updates(deck_owner_client,
-                                    cards_for_review_testing,
-                                    card, card_id, response_message):
+def test_succesfully_reviewed_card_updates(deck_owner_client,
+                                           card, card_id, response_message,
+                                           plus_right_answers, new_srs_xp,
+                                           new_srs_level):
+    initial_right_guesses = card.right_guesses
+    initial_wrong_guesses = card.wrong_guesses
     url = reverse('deck:review_check', args=(card_id,))
     response = deck_owner_client.post(
         url,
         data={
-            'answer': card.answer_1
+            'answer': card.answer_1,
         }
     )
-    print(card)
-    print(card.id)
-    assert card == cards_for_review_testing[card_id - 1]
     assert response.context['message'] == response_message
+    card.refresh_from_db()
+    assert card.right_guesses == initial_right_guesses + plus_right_answers
+    assert card.wrong_guesses == initial_wrong_guesses
+    assert card.srs_xp == new_srs_xp
+    assert card.srs_level == new_srs_level
+    assert card.in_queue is False
+    assert card.datetime_reviewed - timezone.now() < timedelta(seconds=1)
+
+
+
+@pytest.mark.parametrize(
+    ('card, card_id, response_message, plus_wrong_answers, new_srs_xp,'
+     'new_srs_level'),
+    (
+        (pytest.lazy_fixture('rev_card_0'),
+         1,
+         REVIEW_NOT_IN_QUEUE_MESSAGE,
+         0,
+         0,
+         0),
+
+        (pytest.lazy_fixture('rev_card_1'),
+         2,
+         REVIEW_FAILURE_MESSAGE,
+         1,
+         0,
+         0),
+
+        (pytest.lazy_fixture('rev_card_2'),
+         3,
+         REVIEW_FAILURE_MESSAGE,
+         1,
+         0,
+         0),
+
+        (pytest.lazy_fixture('rev_card_3'),
+         4,
+         REVIEW_FAILURE_MESSAGE,
+         1,
+         0,
+         3)
+    ),
+)
+def test_unsuccesfully_reviewed_card_updates(deck_owner_client,
+                                             card, card_id, response_message,
+                                             plus_wrong_answers, new_srs_xp,
+                                             new_srs_level):
+    initial_right_guesses = card.right_guesses
+    initial_wrong_guesses = card.wrong_guesses
+    url = reverse('deck:review_check', args=(card_id,))
+    response = deck_owner_client.post(
+        url,
+        data={
+            'answer': 'wrong',
+        }
+    )
+    assert response.context['message'] == response_message
+    card.refresh_from_db()
+    assert card.right_guesses == initial_right_guesses
+    assert card.wrong_guesses == initial_wrong_guesses + plus_wrong_answers
+    assert card.srs_xp == new_srs_xp
+    assert card.srs_level == new_srs_level
+    assert card.in_queue is False
+    assert card.datetime_reviewed - timezone.now() < timedelta(seconds=1)
