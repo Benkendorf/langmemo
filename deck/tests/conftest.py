@@ -194,3 +194,77 @@ def rev_card_2(cards_for_review_testing):
 @pytest.fixture
 def rev_card_3(cards_for_review_testing):
     return cards_for_review_testing[3]
+
+
+@pytest.fixture
+def rev_card_1_ans_1(rev_card_1):
+    return rev_card_1.answer_1
+
+
+@pytest.fixture
+def rev_card_1_ans_2(rev_card_1):
+    return rev_card_1.answer_2
+
+
+@pytest.fixture
+def rev_card_1_ans_3(rev_card_1):
+    return rev_card_1.answer_3
+
+
+@pytest.fixture
+def rev_card_1_levenshtein(rev_card_1_ans_1):
+    return [[rev_card_1_ans_1[:n] + 'x' + rev_card_1_ans_1[n:] for n in range(len(rev_card_1_ans_1) + 1)]
+            + [rev_card_1_ans_1[:n - 1] + 'x' + rev_card_1_ans_1[n:] for n in range(1, len(rev_card_1_ans_1) + 1)]
+            + [rev_card_1_ans_1[:n - 1] + rev_card_1_ans_1[n:] for n in range(1, len(rev_card_1_ans_1) + 1)]]
+
+
+@pytest.fixture
+def deck_for_refresh_queue_1(deck_owner):
+    return Deck.objects.create(
+        user=deck_owner,
+        deck_name='deck_for_refresh_queue_1'
+    )
+
+
+@pytest.fixture
+def deck_for_refresh_queue_2(deck_owner):
+    return Deck.objects.create(
+        user=deck_owner,
+        deck_name='deck_for_refresh_queue_2'
+    )
+
+
+@pytest.fixture
+def cards_for_refresh_queue(deck_for_refresh_queue_1,
+                            deck_for_refresh_queue_2):
+    all_cards = [
+        Card.objects.create(
+            deck=deck_for_refresh_queue_1,
+            question='first_test_question',
+            answer_1='first_test_answer_1',
+            answer_2='first_test_answer_2',
+            answer_3='first_test_answer_3',
+            datetime_created=timezone.now() - timedelta(days=20),
+            in_queue=False
+        ),
+        Card.objects.create(
+            deck=deck_for_refresh_queue_2,
+            question='second_test_question',
+            answer_1='second_test_answer_1',
+            answer_2='second_test_answer_2',
+            answer_3='second_test_answer_3',
+            datetime_created=timezone.now() - timedelta(days=15),
+            in_queue=False
+        )
+    ]
+    return all_cards
+
+
+@pytest.fixture
+def refresh_queue_card_0(cards_for_refresh_queue):
+    return cards_for_refresh_queue[0]
+
+
+@pytest.fixture
+def refresh_queue_card_1(cards_for_refresh_queue):
+    return cards_for_refresh_queue[1]

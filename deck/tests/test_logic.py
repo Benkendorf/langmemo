@@ -4,9 +4,9 @@
 # Удаление карты +
 # Обновление инфы в карте после успешного ревью +
 # Обновление инфы в карте после проваленного ревью +
-# Проверить, что работают все три варианта ответа
-# Проверка работы Дам-Лев
-# Обновление статуса in_queue
+# Проверить, что работают все три варианта ответа +
+# Проверка работы Дам-Лев +
+# Проверка refresh_queue (в т.ч. что при ревью обновляется только текущая колода)
 #
 # Анон не может ничего делать
 
@@ -18,8 +18,7 @@ from django.urls import reverse
 from django.utils import timezone
 from pytest_django.asserts import assertRedirects
 from deck.models import Card
-from deck.views import (SRS_LEVELS,
-                        REVIEW_SUCCESS_MESSAGE,
+from deck.views import (REVIEW_SUCCESS_MESSAGE,
                         REVIEW_FAILURE_MESSAGE,
                         REVIEW_NOT_IN_QUEUE_MESSAGE)
 
@@ -176,6 +175,11 @@ def test_succesfully_reviewed_card_updates(deck_owner_client,
     card.refresh_from_db()
     assert card.right_guesses == initial_right_guesses + plus_right_answers
     assert card.wrong_guesses == initial_wrong_guesses
+    try:
+        assert card.winrate == (100 * card.right_guesses
+                                / (card.right_guesses + card.wrong_guesses))
+    except ZeroDivisionError:
+        assert card.winrate is None
     assert card.srs_xp == new_srs_xp
     assert card.srs_level == new_srs_level
     assert card.in_queue is False
@@ -233,7 +237,173 @@ def test_unsuccesfully_reviewed_card_updates(deck_owner_client,
     card.refresh_from_db()
     assert card.right_guesses == initial_right_guesses
     assert card.wrong_guesses == initial_wrong_guesses + plus_wrong_answers
+    try:
+        assert card.winrate == (100 * card.right_guesses
+                                / (card.right_guesses + card.wrong_guesses))
+    except ZeroDivisionError:
+        assert card.winrate is None
     assert card.srs_xp == new_srs_xp
     assert card.srs_level == new_srs_level
     assert card.in_queue is False
     assert card.datetime_reviewed - timezone.now() < timedelta(seconds=1)
+
+
+def test_anon_cant_review_card(client, rev_card_1):
+    initial_right_guesses = rev_card_1.right_guesses
+    initial_wrong_guesses = rev_card_1.wrong_guesses
+    initial_srs_xp = rev_card_1.srs_xp
+    initial_srs_level = rev_card_1.srs_level
+    initial_datetime_reviewed = rev_card_1.datetime_reviewed
+
+    url = reverse('deck:review_check', args=(rev_card_1.id,))
+    redirect_url = reverse('login') + '?next=' + url
+    response = client.post(
+        url,
+        data={
+            'answer': 'some_answer',
+        }
+    )
+    assert response.status_code == HTTPStatus.FOUND
+    assertRedirects(response, redirect_url)
+
+    rev_card_1.refresh_from_db()
+    assert rev_card_1.right_guesses == initial_right_guesses
+    assert rev_card_1.wrong_guesses == initial_wrong_guesses
+    assert rev_card_1.srs_xp == initial_srs_xp
+    assert rev_card_1.srs_level == initial_srs_level
+    assert rev_card_1.in_queue is True
+    assert rev_card_1.datetime_reviewed == initial_datetime_reviewed
+
+
+@pytest.mark.parametrize(
+    'answer',
+    (
+        pytest.lazy_fixture('rev_card_1_ans_1'),
+        pytest.lazy_fixture('rev_card_1_ans_2'),
+        pytest.lazy_fixture('rev_card_1_ans_3')
+    )
+)
+def test_all_answers_work(deck_owner_client, rev_card_1, answer):
+    initial_right_guesses = rev_card_1.right_guesses
+    initial_wrong_guesses = rev_card_1.wrong_guesses
+    initial_srs_xp = rev_card_1.srs_xp
+    initial_srs_level = rev_card_1.srs_level
+
+    url = reverse('deck:review_check', args=(rev_card_1.id,))
+    response = deck_owner_client.post(
+        url,
+        data={
+            'answer': answer,
+        }
+    )
+
+    assert response.context['message'] == REVIEW_SUCCESS_MESSAGE
+    rev_card_1.refresh_from_db()
+    assert rev_card_1.right_guesses == initial_right_guesses + 1
+    assert rev_card_1.wrong_guesses == initial_wrong_guesses
+    try:
+        assert rev_card_1.winrate == (100 * rev_card_1.right_guesses
+                                      / (rev_card_1.right_guesses
+                                         + rev_card_1.wrong_guesses))
+    except ZeroDivisionError:
+        assert rev_card_1.winrate is None
+    assert rev_card_1.srs_xp == initial_srs_xp + 1
+    assert rev_card_1.srs_level == initial_srs_level
+    assert rev_card_1.in_queue is False
+    assert rev_card_1.datetime_reviewed - timezone.now() < timedelta(seconds=1)
+
+
+@pytest.mark.parametrize(
+    'answer',
+    (
+        ['second_rev_answer_1'[:n] + 'x' + 'second_rev_answer_1'[n:] for n in range(len('second_rev_answer_1') + 1)]   # insertion
+        + ['second_rev_answer_1'[:n - 1] + 'x' + 'second_rev_answer_1'[n:] for n in range(1, len('second_rev_answer_1') + 1)]  # substitution
+        + ['second_rev_answer_1'[:n - 1] + 'second_rev_answer_1'[n:] for n in range(1, len('second_rev_answer_1') + 1)]   # deletion
+        + ['second_rev_answer_1'[:n] + 'second_rev_answer_1'[n + 1] + 'second_rev_answer_1'[n] + 'second_rev_answer_1'[n + 2:] for n in range(0, len('second_rev_answer_1') - 1)]    # Damerau transposition
+    )
+)
+def test_levenshtein_variants(deck_owner_client, rev_card_1, answer):
+    initial_right_guesses = rev_card_1.right_guesses
+    initial_wrong_guesses = rev_card_1.wrong_guesses
+    initial_srs_xp = rev_card_1.srs_xp
+    initial_srs_level = rev_card_1.srs_level
+
+    url = reverse('deck:review_check', args=(rev_card_1.id,))
+    response = deck_owner_client.post(
+        url,
+        data={
+            'answer': answer,
+        }
+    )
+    assert response.context['message'] == REVIEW_SUCCESS_MESSAGE
+    rev_card_1.refresh_from_db()
+    assert rev_card_1.right_guesses == initial_right_guesses + 1
+    assert rev_card_1.wrong_guesses == initial_wrong_guesses
+    try:
+        assert rev_card_1.winrate == (100 * rev_card_1.right_guesses
+                                      / (rev_card_1.right_guesses
+                                         + rev_card_1.wrong_guesses))
+    except ZeroDivisionError:
+        assert rev_card_1.winrate is None
+    assert rev_card_1.srs_xp == initial_srs_xp + 1
+    assert rev_card_1.srs_level == initial_srs_level
+    assert rev_card_1.in_queue is False
+    assert rev_card_1.datetime_reviewed - timezone.now() < timedelta(seconds=1)
+
+
+@pytest.mark.parametrize(
+    'name',
+    (
+        'deck:card_list',
+        'deck:review_display'
+    )
+)
+def test_refresh_queue_for_current_deck_cases(name, refresh_queue_card_0,
+                                              refresh_queue_card_1,
+                                              deck_owner_client):
+    """Проверяем обновление очереди в представлениях,
+    в которых обновляется только текущая колода."""
+    url = reverse(name, args=(refresh_queue_card_0.deck.id,))
+    deck_owner_client.get(url)
+
+    refresh_queue_card_0.refresh_from_db()
+    refresh_queue_card_1.refresh_from_db()
+    assert refresh_queue_card_0.in_queue is True
+    assert refresh_queue_card_1.in_queue is False
+
+
+@pytest.mark.parametrize(
+    'data',
+    (
+        pytest.lazy_fixture('data_for_card'),
+        pytest.lazy_fixture('no_answers_data_for_card'),
+    )
+)
+def test_refresh_queue_for_create_card(data, refresh_queue_card_0,
+                                       refresh_queue_card_1,
+                                       deck_owner_client):
+    """Отдельный тест для представления создания карты,
+    т.к. здесь применяется метод POST."""
+    url = reverse('deck:create_card', args=(refresh_queue_card_0.deck.id,))
+    deck_owner_client.post(
+        url,
+        data=data
+    )
+
+    refresh_queue_card_0.refresh_from_db()
+    refresh_queue_card_1.refresh_from_db()
+    assert refresh_queue_card_0.in_queue is True
+    assert refresh_queue_card_1.in_queue is False
+
+
+def test_refresh_queue_for_homepage(refresh_queue_card_0,
+                                              refresh_queue_card_1,
+                                              deck_owner_client):
+    """На главной странице обновляются все колоды."""
+    url = reverse('homepage:index')
+    deck_owner_client.get(url)
+
+    refresh_queue_card_0.refresh_from_db()
+    refresh_queue_card_1.refresh_from_db()
+    assert refresh_queue_card_0.in_queue is True
+    assert refresh_queue_card_1.in_queue is True
