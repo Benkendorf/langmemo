@@ -20,5 +20,10 @@ urlpatterns = [
         views.CardDeleteView.as_view(),
         name='delete_card'
     ),
+    path(
+        'edit_card/<int:card_id>/',
+        views.CardUpdateView.as_view(),
+        name='edit_card'
+    ),
     path('<int:deck_id>/', views.CardListView.as_view(), name='card_list'),
 ]

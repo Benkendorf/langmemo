@@ -89,7 +89,7 @@
         <hr class="opacity-0">
 
         <div class="hstack gap-3">
-          <a href="#" class="btn btn-outline-secondary">&#x270e; Редактировать</a>
+          <a href="{% url 'deck:edit_card' card.id %}" class="btn btn-outline-secondary">&#x270e; Редактировать</a>
           <a href="{% url 'deck:delete_card' card.id %}" class="btn btn-danger">Удалить</a>
           
         </div>

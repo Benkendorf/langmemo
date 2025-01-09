@@ -11,7 +11,8 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import (
     CreateView,
     DeleteView,
-    ListView
+    ListView,
+    UpdateView
 )
 
 from .models import Card, Deck
@@ -139,6 +140,29 @@ class CardCreateView(LoginRequiredMixin, CreateView):
 class CardDeleteView(UserPassesTestMixin, DeleteView):
     """Класс, отвечающий за удаление карты."""
     model = Card
+
+    def test_func(self):
+        object = self.get_object()
+        self.deck_id = object.deck.id
+        return object.deck.user == self.request.user
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(
+            Card,
+            id=self.kwargs['card_id'],
+        )
+
+    def get_success_url(self):
+        return reverse('deck:card_list',
+                       kwargs={'deck_id': self.deck_id})
+
+
+class CardUpdateView(UserPassesTestMixin, UpdateView):
+    """Класс, отвечающий за удаление карты."""
+    model = Card
+    form_class = CardForm
+    template_name_suffix = '_update_form'
+    #fields = ['question', 'answer_1', 'answer_2', 'answer_3']
 
     def test_func(self):
         object = self.get_object()
