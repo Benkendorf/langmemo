@@ -20,6 +20,10 @@ from pytest_django.asserts import assertRedirects
          pytest.lazy_fixture('card_not_in_queue_id_for_args'),
          HTTPStatus.OK),
 
+        ('deck:edit_card',
+         pytest.lazy_fixture('card_not_in_queue_id_for_args'),
+         HTTPStatus.OK),
+
         ('deck:review_display',
          pytest.lazy_fixture('deck_id_for_args'),
          HTTPStatus.OK),
@@ -72,6 +76,10 @@ def test_card_list_pages_redirects(name, args, expected_status,
          pytest.lazy_fixture('card_not_in_queue_id_for_args'),
          HTTPStatus.FORBIDDEN),
 
+        ('deck:edit_card',
+         pytest.lazy_fixture('card_not_in_queue_id_for_args'),
+         HTTPStatus.FORBIDDEN),
+
         ('deck:review_display',
          pytest.lazy_fixture('deck_id_for_args'),
          HTTPStatus.NOT_FOUND),
@@ -119,6 +127,11 @@ def test_card_list_pages_redirects_for_other_user(name, args, expected_status,
          'login'),
 
         ('deck:delete_card',
+         pytest.lazy_fixture('card_not_in_queue_id_for_args'),
+         HTTPStatus.FOUND,
+         'login'),
+
+        ('deck:edit_card',
          pytest.lazy_fixture('card_not_in_queue_id_for_args'),
          HTTPStatus.FOUND,
          'login'),
