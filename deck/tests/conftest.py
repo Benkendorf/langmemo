@@ -50,6 +50,7 @@ def data_for_deck():
         'deck_name': 'test_deck'
     }
 
+
 @pytest.fixture
 def data_for_card():
     return {
@@ -67,6 +68,16 @@ def no_answers_data_for_card():
         'answer_1': '',
         'answer_2': '',
         'answer_3': '',
+    }
+
+
+@pytest.fixture
+def data_for_card_editing():
+    return {
+        'question': 'edited_question',
+        'answer_1': 'edited_answer_1',
+        'answer_2': 'edited_answer_2',
+        'answer_3': 'edited_answer_3',
     }
 
 

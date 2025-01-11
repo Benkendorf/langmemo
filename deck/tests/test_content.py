@@ -49,3 +49,11 @@ def test_cards_order_in_deck_list(deck_owner_client, deck_id_for_args, cards):
     print(page_obj)
     print(sorted_page_obj)
     assert list(page_obj) == sorted_page_obj
+
+
+def test_card_edit_contains_form(deck_owner_client,
+                                 card_not_in_queue_id_for_args):
+    url = reverse('deck:edit_card', args=card_not_in_queue_id_for_args)
+    response = deck_owner_client.get(url)
+    assert 'form' in response.context
+    assert isinstance(response.context['form'], CardForm)

@@ -125,6 +125,81 @@ def test_not_deck_owner_cant_delete_card(
     assert card_count == len(cards)
 
 
+def test_anon_cant_edit_card(
+        client,
+        cards,
+        data_for_card_editing):
+    initial_question = cards[0].question
+    initial_answer_1 = cards[0].answer_1
+    initial_answer_2 = cards[0].answer_2
+    initial_answer_3 = cards[0].answer_3
+
+    url = reverse('deck:edit_card', args=(cards[0].id,))
+    client.post(url, data=data_for_card_editing)
+
+    cards[0].refresh_from_db()
+
+    assert cards[0].question == initial_question
+    assert cards[0].answer_1 == initial_answer_1
+    assert cards[0].answer_2 == initial_answer_2
+    assert cards[0].answer_3 == initial_answer_3
+
+
+def test_not_deck_owner_cant_edit_card(
+        not_deck_owner_client,
+        cards,
+        data_for_card_editing):
+    initial_question = cards[0].question
+    initial_answer_1 = cards[0].answer_1
+    initial_answer_2 = cards[0].answer_2
+    initial_answer_3 = cards[0].answer_3
+
+    url = reverse('deck:edit_card', args=(cards[0].id,))
+    not_deck_owner_client.post(url, data=data_for_card_editing)
+
+    cards[0].refresh_from_db()
+
+    assert cards[0].question == initial_question
+    assert cards[0].answer_1 == initial_answer_1
+    assert cards[0].answer_2 == initial_answer_2
+    assert cards[0].answer_3 == initial_answer_3
+
+
+def test_deck_owner_cant_edit_card_with_incomplete_data(
+        not_deck_owner_client,
+        cards,
+        no_answers_data_for_card):
+    initial_question = cards[0].question
+    initial_answer_1 = cards[0].answer_1
+    initial_answer_2 = cards[0].answer_2
+    initial_answer_3 = cards[0].answer_3
+
+    url = reverse('deck:edit_card', args=(cards[0].id,))
+    not_deck_owner_client.post(url, data=no_answers_data_for_card)
+
+    cards[0].refresh_from_db()
+
+    assert cards[0].question == initial_question
+    assert cards[0].answer_1 == initial_answer_1
+    assert cards[0].answer_2 == initial_answer_2
+    assert cards[0].answer_3 == initial_answer_3
+
+
+def test_deck_owner_can_edit_card(
+        deck_owner_client,
+        cards,
+        data_for_card_editing):
+    url = reverse('deck:edit_card', args=(cards[0].id,))
+    deck_owner_client.post(url, data=data_for_card_editing)
+
+    cards[0].refresh_from_db()
+
+    assert cards[0].question == data_for_card_editing['question']
+    assert cards[0].answer_1 == data_for_card_editing['answer_1']
+    assert cards[0].answer_2 == data_for_card_editing['answer_2']
+    assert cards[0].answer_3 == data_for_card_editing['answer_3']
+
+
 @pytest.mark.parametrize(
     ('card, card_id, response_message, plus_right_answers, new_srs_xp,'
      'new_srs_level'),
