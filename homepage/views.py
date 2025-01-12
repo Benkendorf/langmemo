@@ -1,5 +1,7 @@
+from datetime import datetime, timedelta
+
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.db.models import Avg, Count, Q
+from django.db.models import Avg, Count, Q, Sum
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -7,14 +9,29 @@ from django.views.generic import (
 )
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 
-from deck.models import Deck
+from deck.models import Card, Deck
 from deck.forms import DeckForm
 
 from deck.views import refresh_queue
 
+from deck.views import SRS_LEVELS
 DECKS_PAGINATION_LIMIT = 9
 DECK_BAD_WINRATE_LIMIT = 50
+WEEKDAYS_RUS = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье']
+TOTAL_CALENDAR_DAYS = 5
+
+
+def get_total_queue_end_of_day(plus_days, user):
+    cards = Card.objects.filter(
+        deck__user=user
+    )
+    total = 0
+    for card in cards:
+        if (card.datetime_reviewed is None) or (timezone.make_aware(datetime(year=timezone.now().year, month=timezone.now().month, day=timezone.now().day + plus_days, hour=23, minute=59, second=59)) - card.datetime_reviewed > timedelta(hours=SRS_LEVELS[card.srs_level]['time_interval_hrs'])):
+            total += 1
+    return total
 
 
 class DeckListView(ListView):
@@ -40,8 +57,27 @@ class DeckListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        cards_total_now = self.get_queryset().aggregate(Sum("cards_in_queue"))['cards_in_queue__sum']
+        end_of_day_totals = [
+            get_total_queue_end_of_day(plus_days=i, user=self.request.user)
+            for i in range(TOTAL_CALENDAR_DAYS)
+        ]
+        calendar = [
+            {'weekday': 'Сегодня',
+             'diff': end_of_day_totals[0] - cards_total_now,
+             'end_of_day': end_of_day_totals[0]},
+        ] + [
+            {'weekday': WEEKDAYS_RUS[(timezone.now().weekday() + i) % 7],
+             'diff': end_of_day_totals[i] - end_of_day_totals[i - 1],
+             'end_of_day': end_of_day_totals[i]}
+            for i in range(1, TOTAL_CALENDAR_DAYS)
+        ]
+
         context['form'] = DeckForm()
         context['deck_bad_winrate'] = DECK_BAD_WINRATE_LIMIT
+        context['cards_total_now'] = cards_total_now
+        context['calendar'] = calendar
 
         return context
 

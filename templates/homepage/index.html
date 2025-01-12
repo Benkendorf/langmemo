@@ -37,7 +37,7 @@
   </article>
 {% else %}
 
-  <article class="container row justify-content-center">
+  <article class="container row justify-content-between">
     <h1>Колоды:</h1>
     <hr class="opacity-0">
     <div class="col-4">
@@ -49,6 +49,27 @@
             {% bootstrap_form form show_label=False %}
             <input class="btn btn-success" type="submit" value="Добавить колоду">
           </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-4">
+      <div class="card">
+        <h5 class="card-header bg-info-subtle">Карт в очереди: {{ cards_total_now }}</h5>
+        <div class="card-body">
+
+          <table class="table table-striped">
+            <tbody>
+              {% for day in calendar%}
+                <tr>
+                  <td>{{ day.weekday }}</td>
+                  <td>+{{ day.diff }}</td>
+                  <td>Всего: {{ day.end_of_day }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
         </div>
       </div>
     </div>
