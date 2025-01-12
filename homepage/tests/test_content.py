@@ -41,3 +41,13 @@ def test_homepage_contains_form(deck_owner_client):
     response = deck_owner_client.get(url)
     assert 'form' in response.context
     assert isinstance(response.context['form'], DeckForm)
+
+
+def test_calendar(deck_owner, deck_owner_client, cards_for_calendar):
+    url = reverse('homepage:index')
+    response = deck_owner_client.get(url)
+    assert response.context['cards_total_now'] == Card.objects.filter(
+        deck__user=deck_owner,
+        in_queue=True
+    ).count()
+    assert response.context['calendar'][1]['end_of_day'] == 2

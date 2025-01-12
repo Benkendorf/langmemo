@@ -472,8 +472,8 @@ def test_refresh_queue_for_create_card(data, refresh_queue_card_0,
 
 
 def test_refresh_queue_for_homepage(refresh_queue_card_0,
-                                              refresh_queue_card_1,
-                                              deck_owner_client):
+                                    refresh_queue_card_1,
+                                    deck_owner_client):
     """На главной странице обновляются все колоды."""
     url = reverse('homepage:index')
     deck_owner_client.get(url)

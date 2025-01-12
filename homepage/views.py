@@ -59,20 +59,26 @@ class DeckListView(ListView):
         context = super().get_context_data(**kwargs)
 
         cards_total_now = self.get_queryset().aggregate(Sum("cards_in_queue"))['cards_in_queue__sum']
-        end_of_day_totals = [
-            get_total_queue_end_of_day(plus_days=i, user=self.request.user)
-            for i in range(TOTAL_CALENDAR_DAYS)
-        ]
-        calendar = [
-            {'weekday': 'Сегодня',
-             'diff': end_of_day_totals[0] - cards_total_now,
-             'end_of_day': end_of_day_totals[0]},
-        ] + [
-            {'weekday': WEEKDAYS_RUS[(timezone.now().weekday() + i) % 7],
-             'diff': end_of_day_totals[i] - end_of_day_totals[i - 1],
-             'end_of_day': end_of_day_totals[i]}
-            for i in range(1, TOTAL_CALENDAR_DAYS)
-        ]
+        if cards_total_now is None:
+            cards_total_now = 0
+
+        if self.request.user.is_authenticated:
+            end_of_day_totals = [
+                get_total_queue_end_of_day(plus_days=i, user=self.request.user)
+                for i in range(TOTAL_CALENDAR_DAYS)
+            ]
+            calendar = [
+                {'weekday': 'Сегодня',
+                 'diff': end_of_day_totals[0] - cards_total_now,
+                 'end_of_day': end_of_day_totals[0]},
+            ] + [
+                {'weekday': WEEKDAYS_RUS[(timezone.now().weekday() + i) % 7],
+                 'diff': end_of_day_totals[i] - end_of_day_totals[i - 1],
+                 'end_of_day': end_of_day_totals[i]}
+                for i in range(1, TOTAL_CALENDAR_DAYS)
+            ]
+        else:
+            calendar = []
 
         context['form'] = DeckForm()
         context['deck_bad_winrate'] = DECK_BAD_WINRATE_LIMIT
