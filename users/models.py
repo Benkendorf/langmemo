@@ -3,4 +3,4 @@ from django.db import models
 
 
 class CustomUser(AbstractUser):
-    pass
+    email = models.EmailField(('Адрес электронной почты'))  # Переопределяем без blank=True, чтобы имейл был обязательным
