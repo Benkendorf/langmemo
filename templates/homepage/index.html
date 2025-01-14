@@ -6,7 +6,7 @@
 {% block content %}
 
 {% if not user.is_authenticated %}
-  <article class="container row justify-content-center">
+  <article class="row justify-content-center">
     <div class="col-6">
 
       <div class="card text-center">
@@ -18,12 +18,14 @@
           <p class="card-text">Составьте колоды с лексикой, а Memory Cards сделает остальное.</p>
           
           <div class="row justify-content-center">
-            <div class="vstack">
+            
               <label for="homepage-login-button">Уже есть аккаунт?</label>
-              <a href="{% url 'login' %}" id="homepage-login-button" class="btn btn-primary">Войти</a>
+              <a href="{% url 'login' %}" id="homepage-login-button" class="btn btn-primary col-6">Войти</a>
+              <hr class="opacity-0">
               <hr>
-              <a href="{% url 'registration' %}" class="btn btn-primary">Зарегистрироваться</a>
-            </div>
+              
+              <a href="{% url 'registration' %}" class="btn btn-primary col-6">Зарегистрироваться</a>
+            
           </div>
 
         </div>
@@ -37,7 +39,7 @@
   </article>
 {% else %}
 
-  <article class="container row justify-content-between">
+  <article class="row">
     <h1>Колоды:</h1>
     <hr class="opacity-0">
     <div class="col-4">
@@ -55,7 +57,7 @@
 
     <div class="col-4">
       <div class="card">
-        <h5 class="card-header bg-info-subtle">Карт в очереди: {{ cards_total_now }}</h5>
+        <h5 class="card-header bg-warning-subtle">Карт в очереди: {{ cards_total_now }}</h5>
         <div class="card-body">
 
           <table class="table table-striped">
@@ -73,11 +75,22 @@
         </div>
       </div>
     </div>
+
+    <div class="col-4">
+      <div class="card">
+        <h5 class="card-header bg-info-subtle">Настройки</h5>
+        <div class="card-body row justify-content-center">
+
+          <a href="{% url 'password_change' %}" class="btn btn-outline-secondary col-8">&#x270e; Сменить пароль</a>
+
+        </div>
+      </div>
+    </div>
   </article>
 
   <hr class="opacity-0">
 
-  <article class="container row">
+  <article class="row">
     {% for deck in page_obj %}
       <div class="col-4">
         <div class="card {% if deck.winrate < deck_bad_winrate %}border-danger{% endif %}">
