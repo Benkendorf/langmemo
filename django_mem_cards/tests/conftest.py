@@ -22,6 +22,7 @@ def deck_owner_client(deck_owner):
 @pytest.fixture
 def registration_data():
     return {'username': 'test_user',
+            'email': 'test@example.org',
             'password1': 'zwerty789',
             'password2': 'zwerty789'}   # Поле Confirm Password
 

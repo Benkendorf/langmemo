@@ -1,9 +1,10 @@
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path, reverse_lazy
-from django.views.generic.edit import CreateView
+from django.views.generic import CreateView
 
 from .forms import CustomUserCreationForm
+from .views import RegistrationView
 
 urlpatterns = [
     path('', include('homepage.urls', namespace='homepage')),
@@ -13,11 +14,7 @@ urlpatterns = [
     path('auth/', include('django.contrib.auth.urls')),
     path(
         'auth/registration/',
-        CreateView.as_view(
-            template_name='registration/registration_form.html',
-            form_class=CustomUserCreationForm,
-            success_url=reverse_lazy('homepage:index'),
-        ),
+        RegistrationView.as_view(),
         name='registration',
     ),
 ]

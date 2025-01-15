@@ -61,3 +61,18 @@ def test_delete_deck_availability(parametrized_client, expected_status,
     url = reverse('homepage:delete_deck', args=deck_id_for_args)
     response = parametrized_client.get(url)
     assert response.status_code == expected_status
+
+
+def test_user_change_password_availability(deck_owner_client):
+    url = reverse('password_change')
+    response = deck_owner_client.get(url)
+    assert response.status_code == HTTPStatus.OK
+
+
+def test_anon_change_password_redirect(client):
+    url = reverse('password_change')
+    response = client.get(url)
+    login_url = reverse('login')
+    expected_url = f'{login_url}?next={url}'
+    assert response.status_code == HTTPStatus.FOUND
+    assertRedirects(response, expected_url)

@@ -1,5 +1,5 @@
-# Тут тесты, что на главную выводятся нужные колоды.
 import pytest
+from django.contrib.auth.forms import PasswordChangeForm
 from django.urls import reverse
 
 from deck.forms import DeckForm
@@ -51,3 +51,10 @@ def test_calendar(deck_owner, deck_owner_client, cards_for_calendar):
         in_queue=True
     ).count()
     assert response.context['calendar'][1]['end_of_day'] == 2
+
+
+def test_password_change_contains_form(deck_owner_client):
+    url = reverse('password_change')
+    response = deck_owner_client.get(url)
+    assert 'form' in response.context
+    assert isinstance(response.context['form'], PasswordChangeForm)

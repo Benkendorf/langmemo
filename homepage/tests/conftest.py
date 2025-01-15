@@ -121,3 +121,12 @@ def cards_for_calendar(deck):
         )
     ]
     return all_cards
+
+
+@pytest.fixture
+def password_change_data():
+    return {
+        'old_password': 'zwerty789',
+        'new_password1': 'new_password_789',
+        'new_password2': 'new_password_789'
+    }
