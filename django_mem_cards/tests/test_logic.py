@@ -24,6 +24,8 @@ def test_anon_can_signup(client, registration_data):
     user = CustomUser.objects.get()
     assert check_password(registration_data['password1'], user.password)
     assert user.username == registration_data['username']
+    # Проверяем авто-логин
+    assert timezone.now() - user.last_login < timedelta(seconds=1)
 
 
 def test_user_can_login(deck_owner, deck_owner_client, login_data):
