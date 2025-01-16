@@ -31,6 +31,8 @@ from pytest_django.asserts import assertRedirects
 )
 def test_card_list_pages_availability(name, args, expected_status,
                                       cards, deck_owner_client):
+    """Проверка доступности страниц списка карт."""
+
     url = reverse(name, args=args)
     response = deck_owner_client.get(url)
     assert response.status_code == expected_status
@@ -58,6 +60,8 @@ def test_card_list_pages_redirects(name, args, expected_status,
                                    redirect_name, redirect_args,
                                    deck,
                                    deck_owner_client):
+    """Проверка редиректов страниц списка карт."""
+
     url = reverse(name, args=args)
     redirect_url = reverse(redirect_name, args=redirect_args)
     response = deck_owner_client.get(url)
@@ -87,6 +91,8 @@ def test_card_list_pages_redirects(name, args, expected_status,
 )
 def test_card_list_pages_for_other_user(name, args, expected_status,
                                         cards, not_deck_owner_client):
+    """Проверка результатов страниц списка карт другого пользователя."""
+
     url = reverse(name, args=args)
     response = not_deck_owner_client.get(url)
     assert response.status_code == expected_status
@@ -106,6 +112,8 @@ def test_card_list_pages_redirects_for_other_user(name, args, expected_status,
                                                   redirect_name, redirect_args,
                                                   cards,
                                                   not_deck_owner_client):
+    """Проверка редиректов страниц списка карт для другого пользователя."""
+
     url = reverse(name, args=args)
     redirect_url = reverse(redirect_name, args=redirect_args)
     response = not_deck_owner_client.get(url)
@@ -145,6 +153,8 @@ def test_card_list_pages_redirects_for_other_user(name, args, expected_status,
 def test_card_list_redirects_for_anon(name, args, expected_status, client,
                                       redirect_name,
                                       cards,):
+    """Проверка редиректов страниц списка карт для анонима."""
+
     url = reverse(name, args=args)
     redirect_url = reverse(redirect_name) + '?next=' + url
     response = client.get(url)

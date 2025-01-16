@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, get_user_model,login
+from django.contrib.auth import authenticate, get_user_model, login
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 
@@ -6,6 +6,8 @@ from .forms import CustomUserCreationForm
 
 
 class RegistrationView(CreateView):
+    """Регистрация пользователя."""
+
     model = get_user_model()
     template_name = 'registration/registration_form.html'
     form_class = CustomUserCreationForm

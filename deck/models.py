@@ -5,6 +5,7 @@ CustomUser = get_user_model()
 
 
 class Deck(models.Model):
+    """Модель колоды."""
     user = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
@@ -23,6 +24,7 @@ class Deck(models.Model):
 
 
 class Card(models.Model):
+    """Модель карты."""
     deck = models.ForeignKey(
         Deck,
         on_delete=models.CASCADE,
@@ -97,6 +99,7 @@ class Card(models.Model):
         return self.question
 
     def save(self, *args, **kwargs):
+        """При каждом сохранении карты винрейт пересчитывается."""
         try:
             self.winrate = (100 * self.right_guesses
                             / (self.right_guesses + self.wrong_guesses))

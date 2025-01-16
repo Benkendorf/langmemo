@@ -4,13 +4,17 @@ from deck.forms import CardForm
 
 
 def test_card_list_contains_form(deck_owner_client, deck_id_for_args):
+    """Проверка наличия формы создания карты в списки карт."""
+
     url = reverse('deck:card_list', args=deck_id_for_args)
     response = deck_owner_client.get(url)
     assert 'form' in response.context
     assert isinstance(response.context['form'], CardForm)
 
 
-def test_cards_are_in_deck_list(deck_owner_client, deck_id_for_args, cards):
+def test_cards_are_in_card_list(deck_owner_client, deck_id_for_args, cards):
+    """Проверка того, что карты выводятся корректно."""
+
     url = reverse('deck:card_list', args=deck_id_for_args)
     response = deck_owner_client.get(url)
     page_obj = response.context['object_list']
@@ -36,7 +40,9 @@ def test_cards_are_in_deck_list(deck_owner_client, deck_id_for_args, cards):
     assert page_obj[0].answer_3 == cards[1].answer_3
 
 
-def test_cards_order_in_deck_list(deck_owner_client, deck_id_for_args, cards):
+def test_cards_order_in_card_list(deck_owner_client, deck_id_for_args, cards):
+    """Проверка, что карты выведены в правильном порядке."""
+
     url = reverse('deck:card_list', args=deck_id_for_args)
     response = deck_owner_client.get(url)
     page_obj = response.context['object_list']
@@ -53,6 +59,8 @@ def test_cards_order_in_deck_list(deck_owner_client, deck_id_for_args, cards):
 
 def test_card_edit_contains_form(deck_owner_client,
                                  card_not_in_queue_id_for_args):
+    """Провека, что страница редактирования карты содержит форму."""
+
     url = reverse('deck:edit_card', args=card_not_in_queue_id_for_args)
     response = deck_owner_client.get(url)
     assert 'form' in response.context

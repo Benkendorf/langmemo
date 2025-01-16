@@ -7,6 +7,8 @@ from deck.models import Card
 
 
 def test_deck_is_on_homepage(deck_owner_client, cards):
+    """Проверка, что информация о колоде выводится на главную."""
+
     response = deck_owner_client.get(reverse('homepage:index'))
     print(response.context['object_list'][0].cards_in_queue)
     page_obj = response.context['object_list']
@@ -32,11 +34,15 @@ def test_deck_is_on_homepage(deck_owner_client, cards):
 )
 def test_deck_is_not_on_other_user_or_anon_homepage(parametrized_client,
                                                     cards):
+    """Проверка, что информация о колоде не выводится другому пользователю."""
+
     response = parametrized_client.get(reverse('homepage:index'))
     assert len(response.context['object_list']) == 0
 
 
 def test_homepage_contains_form(deck_owner_client):
+    """Проверка, что на главной есть форма создания колоды."""
+
     url = reverse('homepage:index')
     response = deck_owner_client.get(url)
     assert 'form' in response.context
@@ -44,6 +50,8 @@ def test_homepage_contains_form(deck_owner_client):
 
 
 def test_calendar(deck_owner, deck_owner_client, cards_for_calendar):
+    """Проверка корректности информации, выводимой в календаре ревью."""
+
     url = reverse('homepage:index')
     response = deck_owner_client.get(url)
     assert response.context['cards_total_now'] == Card.objects.filter(
@@ -54,6 +62,8 @@ def test_calendar(deck_owner, deck_owner_client, cards_for_calendar):
 
 
 def test_password_change_contains_form(deck_owner_client):
+    """Проверка, что на странице смены пароля есть соответствующая форма."""
+
     url = reverse('password_change')
     response = deck_owner_client.get(url)
     assert 'form' in response.context

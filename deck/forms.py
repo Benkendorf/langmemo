@@ -5,6 +5,7 @@ from .models import Card, Deck
 
 
 class CardForm(forms.ModelForm):
+    """Форма карты."""
     class Meta:
         model = Card
         fields = ('question',
@@ -23,6 +24,7 @@ class CardForm(forms.ModelForm):
 
 
 class DeckForm(forms.ModelForm):
+    """Форма колоды."""
     class Meta:
         model = Deck
         fields = ('deck_name',)

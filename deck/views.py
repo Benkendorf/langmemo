@@ -212,7 +212,7 @@ def review_display(request, deck_id):
 
 @login_required
 def review_check(request, card_id):
-    """Функция, проверяющая ответ на ревью."""
+    """Функция, проверяющая ответ на ревью и обновляющая информацию в карте."""
 
     if request.method == 'GET':
         return redirect(reverse_lazy('homepage:index'))

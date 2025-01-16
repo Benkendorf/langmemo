@@ -7,7 +7,7 @@ from django.views.generic import (
     DeleteView,
     ListView
 )
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 
@@ -24,6 +24,10 @@ TOTAL_CALENDAR_DAYS = 5
 
 
 def get_total_queue_end_of_day(plus_days, user):
+    """Функция, возвращающая суммарное количество карт, которые
+    будут находится в очереди в 23:59:59 в день сегодня+plus_days.
+    """
+
     cards = Card.objects.filter(
         deck__user=user
     )
@@ -36,6 +40,7 @@ def get_total_queue_end_of_day(plus_days, user):
 
 class DeckListView(ListView):
     """Класс, отвечающий за отображение списка колод на главной."""
+
     model = Deck
     paginate_by = DECKS_PAGINATION_LIMIT
     template_name = 'homepage/index.html'
@@ -90,9 +95,13 @@ class DeckListView(ListView):
 
 class DeckCreateView(LoginRequiredMixin, CreateView):
     """Класс, отвечающий за создание колоды."""
+
     model = Deck
     form_class = DeckForm
     template_name = 'homepage/index.html'
+
+    def get(self, *args, **kwargs):
+        return redirect(reverse_lazy('homepage:index'))
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -105,6 +114,7 @@ class DeckCreateView(LoginRequiredMixin, CreateView):
 
 class DeckDeleteView(UserPassesTestMixin, DeleteView):
     """Класс, отвечающий за удаление колоды."""
+
     model = Deck
 
     def test_func(self):

@@ -28,9 +28,9 @@ def registration_data():
 
 
 @pytest.fixture
-def login_data(registration_data):
-    return {'username': registration_data['username'],
-            'password': registration_data['password1']}
+def login_data(deck_owner):
+    return {'username': 'deck_owner',
+            'password': 'zwerty789'}
 
 
 @pytest.fixture

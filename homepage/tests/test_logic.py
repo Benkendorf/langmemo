@@ -9,6 +9,8 @@ from deck.models import Deck
 
 
 def test_user_can_create_deck(deck_owner, deck_owner_client, data_for_deck):
+    """Проверка, что пользователь может создать новую колоду."""
+
     response = deck_owner_client.post(
         reverse('homepage:create_deck'),
         data=data_for_deck
@@ -21,6 +23,8 @@ def test_user_can_create_deck(deck_owner, deck_owner_client, data_for_deck):
 
 
 def test_user_can_delete_deck(deck_owner_client, deck):
+    """Проверка, что пользователь может удалить свою колоду."""
+
     response = deck_owner_client.post(
         reverse('homepage:delete_deck', args=(deck.id, ))
     )
@@ -30,6 +34,8 @@ def test_user_can_delete_deck(deck_owner_client, deck):
 
 def test_user_cant_delete_others_deck(not_deck_owner_client, deck_owner, deck,
                                       data_for_deck):
+    """Проверка, что пользователь не может удалить чужую колоду."""
+
     response = not_deck_owner_client.post(
         reverse('homepage:delete_deck', args=(deck.id, ))
     )
@@ -42,6 +48,8 @@ def test_user_cant_delete_others_deck(not_deck_owner_client, deck_owner, deck,
 
 def test_user_can_change_password(deck_owner_client, deck_owner,
                                   password_change_data):
+    """Проверка, что пользователь может сменить пароль."""
+
     url = reverse('password_change')
     response = deck_owner_client.post(url, data=password_change_data)
     assert response.status_code == HTTPStatus.FOUND
@@ -55,6 +63,8 @@ def test_user_can_change_password(deck_owner_client, deck_owner,
 
 
 def test_anon_cant_change_password(client, password_change_data):
+    """Проверка, что пользователь не может сменить пароль."""
+
     url = reverse('password_change')
     response = client.post(url, data=password_change_data)
     login_url = reverse('login')

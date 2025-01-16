@@ -6,7 +6,7 @@
 # Обновление инфы в карте после проваленного ревью +
 # Проверить, что работают все три варианта ответа +
 # Проверка работы Дам-Лев +
-# Проверка refresh_queue (в т.ч. что при ревью обновляется только текущая колода)
+# Проверка refresh_queue (в т.ч. что при ревью обновляется только текущая колода) +
 #
 # Анон не может ничего делать
 
@@ -31,6 +31,7 @@ from deck.views import (REVIEW_SUCCESS_MESSAGE,
     ),
 )
 def test_anon_cant_create_card(client, deck_id_for_args, data):
+    """Проверка, что аноним не может создать карту."""
     url = reverse('deck:create_card', args=deck_id_for_args)
     client.post(url, data=data)
     card_count = Card.objects.count()
@@ -46,6 +47,7 @@ def test_anon_cant_create_card(client, deck_id_for_args, data):
 )
 def test_not_deck_owner_cant_create_card(not_deck_owner_client,
                                          deck_id_for_args, data):
+    """Проверка, что пользователь не может создать карту в чужой колоде."""
     url = reverse('deck:create_card', args=deck_id_for_args)
     response = not_deck_owner_client.post(url, data=data)
     card_count = Card.objects.count()
@@ -58,6 +60,7 @@ def test_deck_owner_can_create_card_with_correct_data(
         deck,
         deck_id_for_args,
         data_for_card):
+    """Проверка, что пользователь может создать карту в своей колоде."""
 
     url = reverse('deck:create_card', args=deck_id_for_args)
     response = deck_owner_client.post(url, data=data_for_card)
@@ -82,6 +85,7 @@ def test_deck_owner_cant_create_card_with_incorrect_data(
         deck_owner_client,
         deck_id_for_args,
         no_answers_data_for_card):
+    """Проверка, что пользователь не может создать карту без единого ответа."""
 
     url = reverse('deck:create_card', args=deck_id_for_args)
     deck_owner_client.post(url, data=no_answers_data_for_card)
@@ -94,6 +98,7 @@ def test_deck_owner_can_delete_card(
         deck_id_for_args,
         cards,
         card_not_in_queue_id_for_args):
+    """Проверка, что пользователь может удалить карту в своей колоде."""
 
     url = reverse('deck:delete_card', args=card_not_in_queue_id_for_args)
     response = deck_owner_client.post(url)
@@ -109,6 +114,8 @@ def test_anon_cant_delete_card(
         client,
         cards,
         card_not_in_queue_id_for_args):
+    """Проверка, что аноним не может удалить карту."""
+
     url = reverse('deck:delete_card', args=card_not_in_queue_id_for_args)
     client.post(url)
     card_count = Card.objects.count()
@@ -119,6 +126,8 @@ def test_not_deck_owner_cant_delete_card(
         not_deck_owner_client,
         cards,
         card_not_in_queue_id_for_args):
+    """Проверка, что пользователь не может удалить карту в чужой колоде."""
+
     url = reverse('deck:delete_card', args=card_not_in_queue_id_for_args)
     not_deck_owner_client.post(url)
     card_count = Card.objects.count()
@@ -129,6 +138,8 @@ def test_anon_cant_edit_card(
         client,
         cards,
         data_for_card_editing):
+    """Проверка, что аноним не может редактировать карту."""
+
     initial_question = cards[0].question
     initial_answer_1 = cards[0].answer_1
     initial_answer_2 = cards[0].answer_2
@@ -149,6 +160,10 @@ def test_not_deck_owner_cant_edit_card(
         not_deck_owner_client,
         cards,
         data_for_card_editing):
+    """Проверка, что пользователь не может
+    редактировать карту в чужой колоде.
+    """
+
     initial_question = cards[0].question
     initial_answer_1 = cards[0].answer_1
     initial_answer_2 = cards[0].answer_2
@@ -169,6 +184,10 @@ def test_deck_owner_cant_edit_card_with_incomplete_data(
         not_deck_owner_client,
         cards,
         no_answers_data_for_card):
+    """Проверка, что пользователь не может при редактировании
+    оставить у карты ноль ответов.
+    """
+
     initial_question = cards[0].question
     initial_answer_1 = cards[0].answer_1
     initial_answer_2 = cards[0].answer_2
@@ -189,6 +208,7 @@ def test_deck_owner_can_edit_card(
         deck_owner_client,
         cards,
         data_for_card_editing):
+    """Проверка, что пользователь может редактировать карту."""
     url = reverse('deck:edit_card', args=(cards[0].id,))
     deck_owner_client.post(url, data=data_for_card_editing)
 
@@ -237,6 +257,8 @@ def test_succesfully_reviewed_card_updates(deck_owner_client,
                                            card, card_id, response_message,
                                            plus_right_answers, new_srs_xp,
                                            new_srs_level):
+    """Проверка обновления информации в успешно отревьюенной карте."""
+
     initial_right_guesses = card.right_guesses
     initial_wrong_guesses = card.wrong_guesses
     url = reverse('deck:review_check', args=(card_id,))
@@ -299,6 +321,8 @@ def test_unsuccesfully_reviewed_card_updates(deck_owner_client,
                                              card, card_id, response_message,
                                              plus_wrong_answers, new_srs_xp,
                                              new_srs_level):
+    """Проверка обновления информации в неуспешно отревьюенной карте."""
+
     initial_right_guesses = card.right_guesses
     initial_wrong_guesses = card.wrong_guesses
     url = reverse('deck:review_check', args=(card_id,))
@@ -324,6 +348,8 @@ def test_unsuccesfully_reviewed_card_updates(deck_owner_client,
 
 
 def test_anon_cant_review_card(client, rev_card_1):
+    """Проверка, что аноним не может сделать ревью карты."""
+
     initial_right_guesses = rev_card_1.right_guesses
     initial_wrong_guesses = rev_card_1.wrong_guesses
     initial_srs_xp = rev_card_1.srs_xp
@@ -359,6 +385,8 @@ def test_anon_cant_review_card(client, rev_card_1):
     )
 )
 def test_all_answers_work(deck_owner_client, rev_card_1, answer):
+    """Проверка, что каждый из трех ответов работает в ревью."""
+
     initial_right_guesses = rev_card_1.right_guesses
     initial_wrong_guesses = rev_card_1.wrong_guesses
     initial_srs_xp = rev_card_1.srs_xp
@@ -398,6 +426,10 @@ def test_all_answers_work(deck_owner_client, rev_card_1, answer):
     )
 )
 def test_levenshtein_variants(deck_owner_client, rev_card_1, answer):
+    """Проверка, что любая строка с расстоянием
+    Дамерау-Левенштейна = 1 от правильной, подходит в ревью.
+    """
+
     initial_right_guesses = rev_card_1.right_guesses
     initial_wrong_guesses = rev_card_1.wrong_guesses
     initial_srs_xp = rev_card_1.srs_xp
@@ -437,7 +469,9 @@ def test_refresh_queue_for_current_deck_cases(name, refresh_queue_card_0,
                                               refresh_queue_card_1,
                                               deck_owner_client):
     """Проверяем обновление очереди в представлениях,
-    в которых обновляется только текущая колода."""
+    в которых обновляется только текущая колода.
+    """
+
     url = reverse(name, args=(refresh_queue_card_0.deck.id,))
     deck_owner_client.get(url)
 
@@ -458,7 +492,9 @@ def test_refresh_queue_for_create_card(data, refresh_queue_card_0,
                                        refresh_queue_card_1,
                                        deck_owner_client):
     """Отдельный тест для представления создания карты,
-    т.к. здесь применяется метод POST."""
+    т.к. здесь применяется метод POST.
+    """
+
     url = reverse('deck:create_card', args=(refresh_queue_card_0.deck.id,))
     deck_owner_client.post(
         url,
@@ -474,7 +510,8 @@ def test_refresh_queue_for_create_card(data, refresh_queue_card_0,
 def test_refresh_queue_for_homepage(refresh_queue_card_0,
                                     refresh_queue_card_1,
                                     deck_owner_client):
-    """На главной странице обновляются все колоды."""
+    """Проверка, что на главной странице обновляются все колоды."""
+
     url = reverse('homepage:index')
     deck_owner_client.get(url)
 
