@@ -48,7 +48,7 @@
         <div class="card-body">
           <form method="POST" action="{% url 'homepage:create_deck' %}">
             {% csrf_token %}
-            {% bootstrap_form form show_label=False %}
+            {% bootstrap_form form show_label=False autocomplete="off" %}
             <input class="btn btn-success" type="submit" value="Добавить колоду">
           </form>
         </div>

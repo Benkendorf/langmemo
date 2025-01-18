@@ -12,9 +12,19 @@
     <div class="card-body">
       <h4 class="card-title">{{ reviewed_card }}</h4>
       <div class="input-group mb-3">
-        <input type="text" class="form-control bg-warning-subtle" placeholder="{{ message }}" aria-label="Сообщение" aria-describedby="button-addon2">
-        <a href="{% url 'deck:review_display' reviewed_card.deck.id %}" class="btn btn-primary" type="button" id="button-addon2">➤</a>
+        <input type="text" class="form-control bg-warning-subtle" placeholder="{{ message }}" aria-label="Сообщение" aria-describedby="text-input" readonly disabled>
+        <a href="{% url 'deck:review_display' reviewed_card.deck.id %}" class="btn btn-primary" id="nextBtn" type="button">➤</a>
       </div>
+
+      <script>
+        document.addEventListener("keypress", function(event) {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            document.getElementById("nextBtn").click();
+          }
+        });
+      </script>
+
     </div>
     
   </div>
