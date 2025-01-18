@@ -130,6 +130,3 @@ def password_change_data():
         'new_password1': 'new_password_789',
         'new_password2': 'new_password_789'
     }
-
-
-#git test
