@@ -13,8 +13,11 @@
         >
         <span class="navbar-toggler-icon"></span>
       </div>
-      <a class="navbar-brand" href="{% url 'homepage:index' %}">
-        <img src="{% static 'img/placeholder_logo2.png' %}" height="50" class="d-inline-block align-top" alt="">            
+      <a class="navbar-brand fs-3" href="{% url 'homepage:index' %}">
+        <!--
+        <img src="{% static 'img/placeholder_logo2.png' %}" height="50" class="d-inline-block align-top" alt="">
+        -->
+        <b>LangMemo</b>
       </a>
       {% with request.resolver_match.view_name as view_name %}
         <ul class="nav  nav-pills">

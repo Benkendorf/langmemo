@@ -30,7 +30,11 @@
         
         <div class="hstack gap-3">          
           <form method="POST" action="{% url 'homepage:delete_deck' deck.id %}">
-            {% csrf_token %}<input class="btn btn-danger" type="submit" value="Удалить">
+            {% csrf_token %}
+            <div class="hstack gap-3">
+              <input class="btn btn-danger" type="submit" value="Удалить">
+              <a class="btn btn-outline-primary" href="{% url 'homepage:index' %}">Отмена</a>
+            </div>
           </form>
         </div>
         
