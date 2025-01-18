@@ -15,7 +15,7 @@
     <div class="card">
       <h5 class="card-header bg-success-subtle">Добавить новую карту</h5>
       <div class="card-body">
-        <form method="post" action="{% url 'deck:create_card' deck.pk %}">
+        <form method="post" autocomplete="off" action="{% url 'deck:create_card' deck.pk %}">
           {% csrf_token %}
           {% bootstrap_form form show_label=False autocomplete="off" %}
           <input class="btn btn-success" type="submit" value="Добавить карту">
