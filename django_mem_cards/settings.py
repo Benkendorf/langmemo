@@ -13,7 +13,7 @@ TEMPLATES_DIR = BASE_DIR / 'templates'
 
 # SECURITY WARNING: keep the secret key used in production secret!
 load_dotenv()
-SECRET_KEY = os.getenv('TOKEN')
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
