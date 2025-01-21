@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load django_bootstrap5 %}
 
-{% block title %}Memory Cards{% endblock %}
+{% block title %}LangMemo{% endblock %}
 
 {% block content %}
 
@@ -15,7 +15,7 @@
         </div>
         <div class="card-body">
           <h5 class="card-title">Начните эффективно изучать иностранные языки!</h5>
-          <p class="card-text">Составьте колоды с лексикой, а Memory Cards сделает остальное.</p>
+          <p class="card-text">Составьте колоды с лексикой, а LangMemo сделает остальное.</p>
           
           <div class="row justify-content-center">
             
@@ -30,7 +30,7 @@
 
         </div>
         <div class="card-footer text-body-secondary">
-          Memory Cards
+          LangMemo
         </div>
       </div>
 
@@ -57,7 +57,7 @@
 
     <div class="col-4">
       <div class="card">
-        <h5 class="card-header bg-warning-subtle">Карт в очереди: {{ cards_total_now }}</h5>
+        <h5 class="card-header bg-warning-subtle">Карточек в очереди: {{ cards_total_now }}</h5>
         <div class="card-body">
 
           <table class="table table-striped">
@@ -98,7 +98,7 @@
 
           <div class="card-body">
             <p class="card-text">
-              Карт: 
+              Карточек: 
               <b>{{ deck.card_count }}</b>
               шт.
             </p>

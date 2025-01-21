@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load django_bootstrap5 %}
 
-{% block title %}Memory Cards{% endblock %}
+{% block title %}LangMemo{% endblock %}
 
 {% block content %}
 
 <article class="row justify-content-center">
 
-<h1>Удалить карту?</h1>
+<h1>Удалить карточку?</h1>
 
 <div class="col-4">
   <div class="card {% if card.winrate < card_bad_winrate %}border-danger{% endif %}">
@@ -28,7 +28,7 @@
       
       {% if card.in_queue %}
         <p>
-          <b>Карта в очереди! Ответы недоступны!</b>
+          <b>Карточка в очереди! Ответы недоступны!</b>
         </p>
       {% else %}
         <details>
