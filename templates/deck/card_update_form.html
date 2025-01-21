@@ -6,7 +6,7 @@
 {% block content %}
 
 <article class="row justify-content-center">
-  <h1>Редактировать карту {{ card.question }}:</h1>
+  <h1>Редактировать карточку {{ card.question }}:</h1>
   <hr class="opacity-0">
   <div class="col-4">
     <div class="card">
@@ -14,7 +14,7 @@
       <div class="card-body">
         <form method="post" action="{% url 'deck:edit_card' card.pk %}">
           {% csrf_token %}
-          {% bootstrap_form form show_label=True %}
+          {% bootstrap_form form show_label=False %}
 
           <div class="hstack gap-3">
             <input class="btn btn-success" type="submit" value="Сохранить">

@@ -37,19 +37,19 @@ class Card(models.Model):
     # В формах методом clean() валидируем,
     # что хотя бы один из ответов не пустой
     answer_1 = models.CharField(
-        'Первый ответ',
+        'Ответ',
         max_length=50,
         null=True,
         blank=True
     )
     answer_2 = models.CharField(
-        'Второй ответ',
+        'Синоним (опционально)',
         max_length=50,
         null=True,
         blank=True
     )
     answer_3 = models.CharField(
-        'Третий ответ',
+        'Синоним (опционально)',
         max_length=50,
         null=True,
         blank=True

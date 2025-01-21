@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load django_bootstrap5 %}
 
-{% block title %}Memory Cards{% endblock %}
+{% block title %}LangMemo{% endblock %}
 
 {% block content %}
 
@@ -13,7 +13,7 @@
   <hr class="opacity-0">
   <div class="col-4">
     <div class="card">
-      <h5 class="card-header bg-success-subtle">Добавить новую карту</h5>
+      <h5 class="card-header bg-success-subtle">Добавить новую карточку</h5>
       <div class="card-body">
         <form method="post" autocomplete="off" action="{% url 'deck:create_card' deck.pk %}">
           {% csrf_token %}
@@ -50,7 +50,7 @@
         
         {% if card.in_queue %}
           <p>
-            <b>Карта в очереди! Ответы недоступны!</b>
+            <b>Карточка в очереди! Ответы недоступны!</b>
           </p>
         {% else %}
           <details>
