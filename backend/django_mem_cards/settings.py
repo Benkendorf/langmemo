@@ -9,21 +9,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = BASE_DIR / 'templates'
 
 load_dotenv()
+SECRET_KEY = os.getenv('SECRET_KEY', get_random_secret_key())
 
-if not os.getenv('SECRET_KEY'):
-    SECRET_KEY = get_random_secret_key()
-else:
-    SECRET_KEY = os.getenv('SECRET_KEY')
+DEBUG = os.getenv('DEBUG', True)
 
-if not os.getenv('DEBUG'):
-    DEBUG = True
-else:
-    DEBUG = os.getenv('DEBUG').lower() == 'true'
-
-if not os.getenv('ALLOWED_HOSTS'):
-    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
-else:
-    ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(', ')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1, localhost').split(', ')
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
@@ -95,11 +85,12 @@ DATABASES = {
         'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
         'HOST': os.getenv('DB_HOST', ''),
         'PORT': os.getenv('DB_PORT', 5432)
-    } if os.getenv('USE_SQLITE') and os.getenv('USE_SQLITE').lower() == 'false'
+    } if os.getenv('USE_SQLITE', 'True').lower() == 'false'
     else {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+
 }
 
 
