@@ -225,28 +225,28 @@ def test_deck_owner_can_edit_card(
      'new_srs_level'),
     (
         (pytest.lazy_fixture('rev_card_0'),
-         1,
+         pytest.lazy_fixture('rev_card_0_id_for_args'),
          REVIEW_NOT_IN_QUEUE_MESSAGE,
          0,
          0,
          0),
 
         (pytest.lazy_fixture('rev_card_1'),
-         2,
+         pytest.lazy_fixture('rev_card_1_id_for_args'),
          REVIEW_SUCCESS_MESSAGE,
          1,
          1,
          0),
 
         (pytest.lazy_fixture('rev_card_2'),
-         3,
+         pytest.lazy_fixture('rev_card_2_id_for_args'),
          REVIEW_SUCCESS_MESSAGE,
          1,
          0,
          1),
 
         (pytest.lazy_fixture('rev_card_3'),
-         4,
+         pytest.lazy_fixture('rev_card_3_id_for_args'),
          REVIEW_SUCCESS_MESSAGE,
          1,
          0,
@@ -261,7 +261,7 @@ def test_succesfully_reviewed_card_updates(deck_owner_client,
 
     initial_right_guesses = card.right_guesses
     initial_wrong_guesses = card.wrong_guesses
-    url = reverse('deck:review_check', args=(card_id,))
+    url = reverse('deck:review_check', args=card_id)
     response = deck_owner_client.post(
         url,
         data={
@@ -289,28 +289,28 @@ def test_succesfully_reviewed_card_updates(deck_owner_client,
      'new_srs_level'),
     (
         (pytest.lazy_fixture('rev_card_0'),
-         1,
+         pytest.lazy_fixture('rev_card_0_id_for_args'),
          REVIEW_NOT_IN_QUEUE_MESSAGE,
          0,
          0,
          0),
 
         (pytest.lazy_fixture('rev_card_1'),
-         2,
+         pytest.lazy_fixture('rev_card_1_id_for_args'),
          REVIEW_FAILURE_MESSAGE,
          1,
          0,
          0),
 
         (pytest.lazy_fixture('rev_card_2'),
-         3,
+         pytest.lazy_fixture('rev_card_2_id_for_args'),
          REVIEW_FAILURE_MESSAGE,
          1,
          0,
          0),
 
         (pytest.lazy_fixture('rev_card_3'),
-         4,
+         pytest.lazy_fixture('rev_card_3_id_for_args'),
          REVIEW_FAILURE_MESSAGE,
          1,
          0,
@@ -325,13 +325,14 @@ def test_unsuccesfully_reviewed_card_updates(deck_owner_client,
 
     initial_right_guesses = card.right_guesses
     initial_wrong_guesses = card.wrong_guesses
-    url = reverse('deck:review_check', args=(card_id,))
+    url = reverse('deck:review_check', args=card_id)
     response = deck_owner_client.post(
         url,
         data={
             'answer': 'wrong',
         }
     )
+
     assert response.context['message'] == response_message
     card.refresh_from_db()
     assert card.right_guesses == initial_right_guesses
