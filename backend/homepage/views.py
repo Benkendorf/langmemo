@@ -33,7 +33,7 @@ def get_total_queue_end_of_day(plus_days, user):
     )
     total = 0
     for card in cards:
-        if (card.datetime_reviewed is None) or (timezone.make_aware(datetime(year=timezone.now().year, month=timezone.now().month, day=timezone.now().day + plus_days, hour=23, minute=59, second=59)) - card.datetime_reviewed > timedelta(hours=SRS_LEVELS[card.srs_level]['time_interval_hrs'])):
+        if (card.datetime_reviewed is None) or (timezone.make_aware(datetime(year=timezone.now().year, month=timezone.now().month, day=timezone.now().day, hour=23, minute=59, second=59) + timedelta(days=plus_days)) - card.datetime_reviewed > timedelta(hours=SRS_LEVELS[card.srs_level]['time_interval_hrs'])):
             total += 1
     return total
 
