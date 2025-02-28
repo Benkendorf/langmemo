@@ -1,9 +1,5 @@
-from django.shortcuts import render
+from django.views.generic.base import TemplateView
 
 
-def description(request):
-    """Страница описания проекта."""
-    return render(
-        request,
-        template_name='about/description.html'
-    )
+class description(TemplateView):
+    template_name = 'about/description.html'
