@@ -9,6 +9,7 @@ from .views import RegistrationView
 urlpatterns = [
     path('', include('homepage.urls', namespace='homepage')),
     path('about/', include('about.urls', namespace='about')),
+    path('tg_bot_page/', include('tg_bot_page.urls', namespace='tg_bot_page')),
     path('deck/', include('deck.urls', namespace='deck')),
     path('admin/', admin.site.urls),
     path('auth/', include('django.contrib.auth.urls')),
