@@ -18,3 +18,6 @@ DECK_BAD_WINRATE_LIMIT = 50
 WEEKDAYS_RUS = ['Понедельник', 'Вторник', 'Среда',
                 'Четверг', 'Пятница', 'Суббота', 'Воскресенье']
 TOTAL_CALENDAR_DAYS = 5
+
+API_TOKEN_LENGTH = 30
+TG_BOT_USERNAME = '<PLACEHOLDER>'
