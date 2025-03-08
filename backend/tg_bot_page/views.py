@@ -28,9 +28,18 @@ def create_api_token(request):
     current_user = request.user
     if current_user.api_token is not None:
         return redirect(reverse_lazy('tg_bot_page:tg_bot_page_view'))
-    current_user.api_token = ''.join(random.choices(
+
+    all_users = UserModel.objects.all()
+    all_tokens = [user.api_token for user in all_users if user.api_token is not None]
+
+    new_token = ''.join(random.choices(
         string.ascii_letters + string.digits, k=API_TOKEN_LENGTH)
     )
+    while new_token in all_tokens:
+        new_token = ''.join(random.choices(
+            string.ascii_letters + string.digits, k=API_TOKEN_LENGTH)
+        )
+    current_user.api_token = new_token
     current_user.save(update_fields=['api_token'])
     return redirect(reverse('tg_bot_page:tg_bot_page_view'))
 
