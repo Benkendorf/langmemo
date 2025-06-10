@@ -49,7 +49,9 @@ def delete_api_token(request):
     current_user = request.user
     if current_user.api_token is not None:
         current_user.api_token = None
-        current_user.save(update_fields=['api_token'])
+    if current_user.telegram_chat_id is not None:
+        current_user.telegram_chat_id = None    # Удаляем также и связь с ТГ
+    current_user.save(update_fields=['api_token', 'telegram_chat_id'])
     return redirect(reverse('tg_bot_page:tg_bot_page_view'))
 
 
