@@ -27,9 +27,10 @@ LOGIN_REDIRECT_URL = 'homepage:index'
 
 INSTALLED_APPS = [
     'homepage.apps.HomepageConfig',
-    'about.apps.AboutConfig',
+    #'about.apps.AboutConfig',
     'deck.apps.DeckConfig',
     'users.apps.UsersConfig',
+    'pages.apps.PagesConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
