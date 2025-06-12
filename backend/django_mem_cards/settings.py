@@ -27,7 +27,6 @@ LOGIN_REDIRECT_URL = 'homepage:index'
 
 INSTALLED_APPS = [
     'homepage.apps.HomepageConfig',
-    #'about.apps.AboutConfig',
     'deck.apps.DeckConfig',
     'users.apps.UsersConfig',
     'pages.apps.PagesConfig',

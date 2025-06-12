@@ -31,11 +31,11 @@
         {% if user.api_token == None %}
           <b>Нет токена!</b>
           <hr class="opacity-0">
-          <a href="{% url 'tg_bot_page:create_api_token' %}" class="btn btn-primary col-8">Создать токен</a>
+          <a href="{% url 'pages:create_api_token' %}" class="btn btn-primary col-8">Создать токен</a>
         {% else %}
           <b>Токен: {{ user.api_token }}</b>
           <hr class="opacity-0">
-          <a href="{% url 'tg_bot_page:delete_api_token' %}" class="btn btn-danger col-8">Удалить токен</a>
+          <a href="{% url 'pages:delete_api_token' %}" class="btn btn-danger col-8">Удалить токен</a>
         {% endif %}
       </div>
     </div>
