@@ -11,6 +11,7 @@ SRS_LEVELS = {
 
 REVIEW_SUCCESS_MESSAGE = 'Правильно!'
 REVIEW_FAILURE_MESSAGE = 'Неправильно!'
+REVIEW_NOT_PERFECT_SUCCESS_MESSAGE = 'Принято! Хотя есть неточность.'
 REVIEW_NOT_IN_QUEUE_MESSAGE = 'Упс! Карты уже нет в очереди!'
 
 DECKS_PAGINATION_LIMIT = 9

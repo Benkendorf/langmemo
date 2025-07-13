@@ -19,6 +19,10 @@ class description(TemplateView):
     template_name = 'pages/description.html'
 
 
+class tutorial(LoginRequiredMixin, TemplateView):
+    template_name = 'pages/tutorial.html'
+
+
 class ApiTokenPageView(LoginRequiredMixin, ListView):
     model = UserModel
     template_name = 'pages/tg_bot_page.html'
