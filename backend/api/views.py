@@ -15,7 +15,13 @@ class UserModelViewSet(UserViewSet):
     #serializer_class = UserSerializer
     permission_classes = [IsAdminUser, ]
 
-    @action(detail=True, methods=['post', 'get'],
+    @action(detail=True, methods=['post'],
             url_path='tg_token')
     def tg_token(self, request):
         pass
+        # POST
+        # Найти юзера по токену
+        # Установить новый тг айди
+        # Передать данные юзера в сериализатор
+
+# При каждом запросе кроме установки токена проверять, что юзер с текущим тг чат айди есть в БД
