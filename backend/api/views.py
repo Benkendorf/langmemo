@@ -1,6 +1,9 @@
+import logging
+
 from django.shortcuts import render
 from djoser.views import UserViewSet
 from django.contrib.auth import get_user_model
+from rest_framework import status
 from rest_framework.permissions import IsAdminUser
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -15,9 +18,13 @@ class UserModelViewSet(UserViewSet):
     #serializer_class = UserSerializer
     permission_classes = [IsAdminUser, ]
 
-    @action(detail=True, methods=['post'],
+    @action(detail=False, methods=['post'],
             url_path='tg_token')
     def tg_token(self, request):
+        logging.critical(f'HEADERS: {dict(request.headers)}')
+        return Response(
+                status=status.HTTP_200_OK
+            )
         pass
         # POST
         # Найти юзера по токену
