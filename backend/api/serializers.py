@@ -4,6 +4,13 @@ from rest_framework import serializers
 UserModel = get_user_model()
 
 
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        fields = ('__all__')
+        model = UserModel
+
+
 class TelegramTokenSerializer(serializers.ModelSerializer):
 
     class Meta:
