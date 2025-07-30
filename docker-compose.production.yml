@@ -32,3 +32,8 @@ services:
       - 8000:80
     volumes:
       - static:/static
+  tg_bot:
+    image: benkendorf/langmemo_tg_bot
+    env_file: bot.env
+    depends_on:
+      - backend
