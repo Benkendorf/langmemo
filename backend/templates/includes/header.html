@@ -21,11 +21,21 @@
       </a>
       {% with request.resolver_match.view_name as view_name %}
         <ul class="nav  nav-pills">
+
+          {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'pages:tutorial' %}">
+                🎓 Обучение
+              </a>
+            </li>
+          {% endif %}
+
           <li class="nav-item">
-            <a class="nav-link {% if view_name == 'about:description' %} text-white {% endif %}" href="{% url 'about:description' %}">
+            <a class="nav-link" href="{% url 'pages:description' %}">
               О проекте
             </a>
           </li>
+
           {% if user.is_authenticated %}
             <div class="btn-group" role="group" aria-label="Basic outlined example">
               <button type="button" class="btn btn-outline-primary"><a class="text-decoration-none text-reset"

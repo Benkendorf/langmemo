@@ -19,20 +19,14 @@ from .models import Card, Deck
 from .forms import CardForm
 from .utils import damerau_levenshtein_distance as dam_lev_dist
 
-CARDS_PAGINATION_LIMIT = 15
-CARD_BAD_WINRATE_LIMIT = 50
-DAM_LEV_DIST_LIMIT = 1
-SRS_LEVELS = {
-    0: {'xp_to_next_lvl': 3, 'time_interval_hrs': 6},
-    1: {'xp_to_next_lvl': 5, 'time_interval_hrs': 24},
-    2: {'xp_to_next_lvl': 5, 'time_interval_hrs': 48},
-    3: {'xp_to_next_lvl': 10, 'time_interval_hrs': 72},
-    4: {'xp_to_next_lvl': None, 'time_interval_hrs': 120}
-}
-
-REVIEW_SUCCESS_MESSAGE = 'Правильно!'
-REVIEW_FAILURE_MESSAGE = 'Неправильно!'
-REVIEW_NOT_IN_QUEUE_MESSAGE = 'Упс! Карты уже нет в очереди!'
+from django_mem_cards.constants import (CARDS_PAGINATION_LIMIT,
+                                        CARD_BAD_WINRATE_LIMIT,
+                                        DAM_LEV_DIST_LIMIT,
+                                        SRS_LEVELS,
+                                        REVIEW_SUCCESS_MESSAGE,
+                                        REVIEW_NOT_PERFECT_SUCCESS_MESSAGE,
+                                        REVIEW_FAILURE_MESSAGE,
+                                        REVIEW_NOT_IN_QUEUE_MESSAGE)
 
 
 def refresh_queue(user, deck_list):
@@ -241,7 +235,7 @@ def review_check(request, card_id):
                         str.lower(ans)
                     )
                 )
-        if min_dist <= DAM_LEV_DIST_LIMIT:
+        if min_dist == 0:
             template_name = 'deck/review_success.html'
             message_to_send = REVIEW_SUCCESS_MESSAGE
             reviewed_card.right_guesses += 1
@@ -253,7 +247,7 @@ def review_check(request, card_id):
                 if reviewed_card.srs_xp >= SRS_LEVELS[reviewed_card.srs_level]['xp_to_next_lvl']:
                     reviewed_card.srs_level += 1
                     reviewed_card.srs_xp = 0
-        else:
+        elif min_dist > DAM_LEV_DIST_LIMIT:
             template_name = 'deck/review_failure.html'
             message_to_send = REVIEW_FAILURE_MESSAGE
             reviewed_card.wrong_guesses += 1
@@ -261,6 +255,18 @@ def review_check(request, card_id):
             reviewed_card.srs_xp = 0
             if reviewed_card.srs_level > 0:
                 reviewed_card.srs_level -= 1
+        else:
+            template_name = 'deck/review_success.html'
+            message_to_send = REVIEW_NOT_PERFECT_SUCCESS_MESSAGE
+            reviewed_card.right_guesses += 1
+            update_fields.append('right_guesses')
+            if reviewed_card.srs_level < 4:
+                reviewed_card.srs_xp += 1
+                # По-хорошему, "больше" быть не может,
+                # но на всякий случай учтем и этот случай.
+                if reviewed_card.srs_xp >= SRS_LEVELS[reviewed_card.srs_level]['xp_to_next_lvl']:
+                    reviewed_card.srs_level += 1
+                    reviewed_card.srs_xp = 0
 
         reviewed_card.datetime_reviewed = timezone.now()
         reviewed_card.in_queue = False

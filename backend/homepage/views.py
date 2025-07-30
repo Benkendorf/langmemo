@@ -16,11 +16,11 @@ from deck.forms import DeckForm
 
 from deck.views import refresh_queue
 
-from deck.views import SRS_LEVELS
-DECKS_PAGINATION_LIMIT = 9
-DECK_BAD_WINRATE_LIMIT = 50
-WEEKDAYS_RUS = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье']
-TOTAL_CALENDAR_DAYS = 5
+from django_mem_cards.constants import (SRS_LEVELS,
+                                        DECKS_PAGINATION_LIMIT,
+                                        DECK_BAD_WINRATE_LIMIT,
+                                        WEEKDAYS_RUS,
+                                        TOTAL_CALENDAR_DAYS)
 
 
 def get_total_queue_end_of_day(plus_days, user):
