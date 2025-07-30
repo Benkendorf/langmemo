@@ -5,41 +5,66 @@
 {% block content %}
 
 <article class="row">
-  <h1>Telegram-бот проекта Langmemo:</h1>
+  <h1>Telegram-бот</h1>
   <hr>
 
   <article class="col-6">
-    <h2>Подзаголовок пояснения:</h2>
+    <h2>Функции бота:</h2>
     <p>
-      Поясняющий текст. И это тоже. И тут. Поясняющий текст. И это тоже. И тут. Поясняющий текст. И это тоже. И тут. Поясняющий текст. И это тоже. И тут. Поясняющий текст. И это тоже. И тут. 
+      Возможности бота совершенствуются и будут дополнятся. На данный момент через бота вы можете получать календарь ревью на ближайшие дни в удобном формате мессенджера.
     <p>
+    <h2>Как это работает:</h2>
     <p>
-      Поясняющий текст. И это тоже. И тут. Поясняющий текст. И это тоже. И тут. Поясняющий текст. И это тоже. И тут. Поясняющий текст. И это тоже. И тут. Поясняющий текст. И это тоже. И тут. 
-    <p>
-    <p>
-      Поясняющий текст. И это тоже. И тут. Поясняющий текст. И это тоже. И тут. Поясняющий текст. И это тоже. И тут. Поясняющий текст. И это тоже. И тут. Поясняющий текст. И это тоже. И тут. 
-    <p>
-    <p>
-      Поясняющий текст. И это тоже. И тут. Поясняющий текст. И это тоже. И тут. Поясняющий текст. И это тоже. И тут. Поясняющий текст. И это тоже. И тут. Поясняющий текст. И это тоже. И тут. 
-    <p>  
+      <ol>
+        <li>
+          <b>Создайте токен.</b>
+          Для работы с ботом вам нужно создать токен. Сделать это можно нажав на кнопку справа. Если вы хотите отвязать вашу учетную запись LangMemo от аккаунта в Telegram, удалите созданный токен.
+        </li>
+        <li>
+          <b>Пришлите токен боту.</b>
+          Бот доступен <a href='https://t.me/langmemo_bot'>по ссылке</a>. Для начала работы скопируйте токен с сайта и пришлите боту.
+        </li>
+      </ol>
   </article>
 
-  <article class="col-6">
-    <div class="card">
-      <h5 class="card-header bg-info-subtle">Токен</h5>
-      <div class="card-body row justify-content-center">
-        {% if user.api_token == None %}
-          <b>Нет токена!</b>
-          <hr class="opacity-0">
-          <a href="{% url 'pages:create_api_token' %}" class="btn btn-primary col-8">Создать токен</a>
-        {% else %}
-          <b>Токен: {{ user.api_token }}</b>
-          <hr class="opacity-0">
-          <a href="{% url 'pages:delete_api_token' %}" class="btn btn-danger col-8">Удалить токен</a>
-        {% endif %}
+<article class="col-6">
+  <div class="card">
+    <h5 class="card-header bg-info-subtle">Токен</h5>
+    <div class="card-body">
+      {% if not user.api_token %}
+      <div class="text-center">
+        <b>Нет токена!</b>
+        <hr class="opacity-0">
+        <a href="{% url 'pages:create_api_token' %}" class="btn btn-primary">Создать токен</a>
       </div>
+      {% else %}
+      <div class="input-group">
+        <input id="apiTokenField" type="text" class="form-control border-end-0 border-secondary" value="{{ user.api_token }}" readonly>
+        <button class="btn btn-outline-secondary border-start-0" type="button" id="copyBtn">
+          <i class="bi bi-clipboard" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="mt-3 text-center">
+        <a href="{% url 'pages:delete_api_token' %}" class="btn btn-danger">Удалить токен</a>
+      </div>
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          const btn = document.getElementById('copyBtn');
+          const field = document.getElementById('apiTokenField');
+          btn.addEventListener('click', () => {
+            navigator.clipboard.writeText(field.value)
+              .then(() => {
+                btn.classList.add('text-success');
+                setTimeout(() => btn.classList.remove('text-success'), 800);
+              })
+              .catch(console.error);
+          });
+        });
+      </script>
+      {% endif %}
     </div>
-  </article>
+  </div>
+</article>
 
 </article>
 
