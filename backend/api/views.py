@@ -21,7 +21,6 @@ UserModel = get_user_model()
 
 class UserModelViewSet(UserViewSet):
     queryset = UserModel.objects.all().order_by('username')
-    #serializer_class = UserSerializer
     permission_classes = [IsAdminUser, ]
 
     @action(detail=False, methods=['post'],
@@ -34,11 +33,6 @@ class UserModelViewSet(UserViewSet):
         return Response(
                 status=status.HTTP_200_OK, data={'ligma': 'balls', 'sugandese': 'nuts'}
             )
-        pass
-        # POST
-        # Найти юзера по токену
-        # Установить новый тг айди
-        # Передать данные юзера в сериализатор
 
     @action(detail=False, methods=['get'],
             url_path='get_info')
@@ -70,11 +64,6 @@ class UserModelViewSet(UserViewSet):
 
         payload = {'calendar': calendar, 'cards_total_now': cards_total_now}
 
-        #serializer = UserSerializer(instance=chat_user)
         return Response(
                 status=status.HTTP_200_OK, data=payload
             )
-        pass
-
-# При каждом запросе кроме установки токена проверять, что юзер с текущим тг чат айди есть в БД
-#
