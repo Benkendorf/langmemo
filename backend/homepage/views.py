@@ -49,10 +49,8 @@ class DeckListView(ListView):
         qs = Deck.objects.filter(
             user__id=self.request.user.pk
         ).annotate(
-            card_count=Count('cards')
-        ).annotate(
-            winrate=Avg('cards__winrate')
-        ).annotate(
+            card_count=Count('cards'),
+            winrate=Avg('cards__winrate'),
             cards_in_queue=Count('cards', filter=Q(cards__in_queue=True))
         )
 

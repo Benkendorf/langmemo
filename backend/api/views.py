@@ -6,6 +6,7 @@ from django.db.models import Count, Sum, Q
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAdminUser
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -67,3 +68,12 @@ class UserModelViewSet(UserViewSet):
         return Response(
                 status=status.HTTP_200_OK, data=payload
             )
+
+    @action(detail=False, methods=['get'],
+            url_path='get_decks', pagination_class=PageNumberPagination)
+    def get_decks(self, request):
+        chat_user = get_object_or_404(UserModel, telegram_chat_id=request.data['telegram_chat_id'])
+        decks = chat_user.decks.annotate()
+        page = self.paginate_queryset(decks)
+
+        
