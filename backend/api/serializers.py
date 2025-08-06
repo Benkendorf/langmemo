@@ -25,5 +25,5 @@ class DeckSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = ('deck_name', 'card_count')
-        read_only_fields = '__all__'
+        read_only_fields = ('__all__',)
         model = Deck

@@ -2,7 +2,7 @@ import logging
 
 from django.shortcuts import render, get_object_or_404
 from djoser.views import UserViewSet
-from django.db.models import Count, Sum, Q
+from django.db.models import Avg, Count, Sum, Q
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from rest_framework import status
@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .serializers import TelegramTokenSerializer, UserSerializer
+from .serializers import TelegramTokenSerializer, UserSerializer, DeckSerializer
 from deck.models import Card
 from homepage.views import get_total_queue_end_of_day
 from django_mem_cards.constants import (WEEKDAYS_RUS,
@@ -73,7 +73,24 @@ class UserModelViewSet(UserViewSet):
             url_path='get_decks', pagination_class=PageNumberPagination)
     def get_decks(self, request):
         chat_user = get_object_or_404(UserModel, telegram_chat_id=request.data['telegram_chat_id'])
-        decks = chat_user.decks.annotate()
-        page = self.paginate_queryset(decks)
+        decks = chat_user.decks.annotate(
+            card_count=Count('cards'),
+            winrate=Avg('cards__winrate'),
+            cards_in_queue=Count('cards', filter=Q(cards__in_queue=True))
+        ).order_by('-pk')
 
-        
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(decks, request)
+        logging.critical('-------------------------')
+        logging.critical(paginator)
+        logging.critical(page)
+        logging.critical(decks)
+        logging.critical('-------------------------')
+
+        serializer = DeckSerializer(
+            instance=page,
+            many=True,
+            context={'request': request}
+        )
+
+        return paginator.get_paginated_response(serializer.data)
