@@ -1,5 +1,6 @@
 import logging
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, get_object_or_404
 from djoser.views import UserViewSet
 from django.db.models import Avg, Count, Sum, Q
@@ -15,7 +16,8 @@ from .serializers import TelegramTokenSerializer, UserSerializer, DeckSerializer
 from deck.models import Card
 from homepage.views import get_total_queue_end_of_day
 from django_mem_cards.constants import (WEEKDAYS_RUS,
-                                        TOTAL_CALENDAR_DAYS)
+                                        TOTAL_CALENDAR_DAYS,
+                                        TG_ERROR_CODES_MESSAGES)
 
 UserModel = get_user_model()
 
@@ -27,12 +29,41 @@ class UserModelViewSet(UserViewSet):
     @action(detail=False, methods=['post'],
             url_path='tg_token')
     def tg_token(self, request):
-        token_user = get_object_or_404(UserModel, api_token=request.data['api_token'])
+        try:
+            token_user = UserModel.objects.get(api_token=request.data['api_token'])
+        except ObjectDoesNotExist:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={'error_code': 'token_not_found',
+                      'user_message': TG_ERROR_CODES_MESSAGES['token_not_found']}
+            )
+        if token_user.telegram_chat_id:
+            if token_user.telegram_chat_id == request.data['telegram_chat_id']:
+                return Response(
+                    status=status.HTTP_400_BAD_REQUEST,
+                    data={'error_code': 'token_already_in_use_by_current_chat_id',
+                          'user_message': TG_ERROR_CODES_MESSAGES['token_already_in_use_by_current_chat_id']}
+                )
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={'error_code': 'token_already_in_use_by_other_chat_id',
+                      'user_message': TG_ERROR_CODES_MESSAGES['token_already_in_use_by_other_chat_id']}
+            )
+
+        if UserModel.objects.filter(
+            telegram_chat_id=request.data['telegram_chat_id']
+        ).exists():
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={'error_code': 'tg_chat_id_already_in_use',
+                      'user_message': TG_ERROR_CODES_MESSAGES['tg_chat_id_already_in_use']}
+            )
+
         serializer = UserSerializer(token_user, data=request.data, partial=True)
         serializer.is_valid()
         serializer.save()
         return Response(
-                status=status.HTTP_200_OK, data={'ligma': 'balls', 'sugandese': 'nuts'}
+                status=status.HTTP_200_OK
             )
 
     @action(detail=False, methods=['get'],

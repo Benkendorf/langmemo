@@ -22,8 +22,10 @@ class TelegramTokenSerializer(serializers.ModelSerializer):
 
 class DeckSerializer(serializers.ModelSerializer):
     card_count = serializers.IntegerField()
+    winrate = serializers.IntegerField()
+    cards_in_queue = serializers.IntegerField()
 
     class Meta:
-        fields = ('deck_name', 'card_count')
+        fields = ('deck_name', 'card_count', 'winrate', 'cards_in_queue')
         read_only_fields = ('__all__',)
         model = Deck
