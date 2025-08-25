@@ -112,11 +112,6 @@ class UserModelViewSet(UserViewSet):
 
         paginator = self.pagination_class()
         page = paginator.paginate_queryset(decks, request)
-        logging.critical('-------------------------')
-        logging.critical(paginator)
-        logging.critical(page)
-        logging.critical(decks)
-        logging.critical('-------------------------')
 
         serializer = DeckSerializer(
             instance=page,
