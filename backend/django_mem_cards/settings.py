@@ -18,6 +18,14 @@ DEBUG = os.getenv('DEBUG', True)
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1, localhost').split(', ')
 
+CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', False)
+
+SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', False)
+
+SECURE_HSTS_SECONDS = os.getenv('SECURE_HSTS_SECONDS', 3600)
+
+SECURE_HSTS_INCLUDE_SUBDOMAINS = os.getenv('SECURE_HSTS_INCLUDE_SUBDOMAINS', False)
+
 AUTH_USER_MODEL = 'users.CustomUser'
 
 LOGIN_URL = 'login'
