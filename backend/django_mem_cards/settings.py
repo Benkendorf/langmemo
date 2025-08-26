@@ -18,6 +18,17 @@ DEBUG = os.getenv('DEBUG', True)
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1, localhost').split(', ')
 
+CSRF_COOKIE_SECURE = True
+
+SESSION_COOKIE_SECURE = True
+
+#SECURE_SSL_REDIRECT = True
+# Редирект уже происходит на внешнем Nginx.
+
+SECURE_HSTS_SECONDS = 3600
+
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
 AUTH_USER_MODEL = 'users.CustomUser'
 
 LOGIN_URL = 'login'
