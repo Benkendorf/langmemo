@@ -23,3 +23,23 @@ TOTAL_CALENDAR_DAYS = 5
 API_TOKEN_LENGTH = 30
 TG_USER_ID_MAX_LENGTH = 50
 TG_BOT_USERNAME = '<PLACEHOLDER>'
+TG_ERROR_CODES_MESSAGES = {
+    'token_not_found':
+        ('Пользователя с таким токеном не найдено!'
+         ' Проверьте корректность токена.'),
+
+    'token_already_in_use_by_other_chat_id':
+        ('Токен уже привязан к другому Telegram-аккаунту.'
+         ' Если вы хотите привязать этот аккаунт, удалите старый токен на'
+         ' сайте, создайте новый и пришлите его сюда.'),
+
+    'token_already_in_use_by_current_chat_id':
+        ('Вы уже добавили этот токен.'
+         ' Все в порядке, добавлять токен повторно не нужно.'),
+
+    'tg_chat_id_already_in_use':
+        ('Telegram уже привязан к другому аккаунту LangMemo.'
+         ' Если вы хотите привязать новый аккаунт LangMemo,'
+         ' удалите токен из старого аккаунта,'
+         ' создайте токен в новом и пришлите его.'),
+}

@@ -206,18 +206,21 @@ def rev_card_2(cards_for_review_testing):
 def rev_card_3(cards_for_review_testing):
     return cards_for_review_testing[3]
 
-  
+
 @pytest.fixture
 def rev_card_0_id_for_args(rev_card_0):
     return (rev_card_0.id, )
+
 
 @pytest.fixture
 def rev_card_1_id_for_args(rev_card_1):
     return (rev_card_1.id, )
 
+
 @pytest.fixture
 def rev_card_2_id_for_args(rev_card_2):
     return (rev_card_2.id, )
+
 
 @pytest.fixture
 def rev_card_3_id_for_args(rev_card_3):
