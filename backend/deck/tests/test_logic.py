@@ -19,6 +19,7 @@ from django.utils import timezone
 from pytest_django.asserts import assertRedirects
 from deck.models import Card
 from deck.views import (REVIEW_SUCCESS_MESSAGE,
+                        REVIEW_NOT_PERFECT_SUCCESS_MESSAGE,
                         REVIEW_FAILURE_MESSAGE,
                         REVIEW_NOT_IN_QUEUE_MESSAGE)
 
@@ -443,7 +444,7 @@ def test_levenshtein_variants(deck_owner_client, rev_card_1, answer):
             'answer': answer,
         }
     )
-    assert response.context['message'] == REVIEW_SUCCESS_MESSAGE
+    assert response.context['message'] == REVIEW_NOT_PERFECT_SUCCESS_MESSAGE
     rev_card_1.refresh_from_db()
     assert rev_card_1.right_guesses == initial_right_guesses + 1
     assert rev_card_1.wrong_guesses == initial_wrong_guesses
