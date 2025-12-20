@@ -5,7 +5,6 @@ from pathlib import Path
 from dotenv import load_dotenv
 from django.core.management.utils import get_random_secret_key
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -14,17 +13,17 @@ TEMPLATES_DIR = BASE_DIR / 'templates'
 load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY', get_random_secret_key())
 
-DEBUG = os.getenv('DEBUG', True)
+DEBUG = os.getenv('DEBUG', True) == 'True'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1, localhost').split(', ')
 
-CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', False)
+CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', False) == 'True'
 
-SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', False)
+SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', False) == 'True'
 
-SECURE_HSTS_SECONDS = os.getenv('SECURE_HSTS_SECONDS', 3600)
+SECURE_HSTS_SECONDS = int(os.getenv('SECURE_HSTS_SECONDS', 3600))
 
-SECURE_HSTS_INCLUDE_SUBDOMAINS = os.getenv('SECURE_HSTS_INCLUDE_SUBDOMAINS', False)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = os.getenv('SECURE_HSTS_INCLUDE_SUBDOMAINS', False) == 'True'
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
